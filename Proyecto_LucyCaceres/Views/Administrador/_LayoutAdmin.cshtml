@@ -49,12 +49,16 @@
                 <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseUsuarios"
                    aria-expanded="true" aria-controls="collapseUsuarios">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Usuarios</span>
+                    <span>Tabla</span>
                 </a>
                 <div id="collapseUsuarios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" onclick="window.location.href='@Url.Action("Usuario", "Administrador")'">Listado</a>
                     </div>
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" onclick="window.location.href='@Url.Action("Usuario", "Administrador")'">Campos</a>
+                    </div>
+
                 </div>
             </li>
 
@@ -63,7 +67,7 @@
                 <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseRoles"
                    aria-expanded="true" aria-controls="collapseRoles">
                     <i class="fas fa-fw fa-low-vision"></i>
-                    <span>Roles</span>
+                    <span>Query</span>
                 </a>
                 <div id="collapseRoles" class="collapse" aria-labelledby="headingUtilities"
                      data-parent="#accordionSidebar">
