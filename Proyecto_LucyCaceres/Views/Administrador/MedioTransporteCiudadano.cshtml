@@ -1,4 +1,4 @@
-﻿
+﻿ 
 @{
     ViewBag.Title = "MedioTransporteCiudadano";
     Layout = "~/Views/Administrador/_LayoutAdmin.cshtml";
@@ -19,58 +19,62 @@
     <link href="~/Theme/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 <body>
+
+
     <div class="form-group row">
-        <div class="col-sm-8">
-            <label>Id:</label>
-            <input type="text" class="form-control form-control-user" id="IdMedTraCiu" readonly>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <label>Tabla:</label>
+            <select id="listaTransp" class="form-control form-control-user"></select>
         </div>
-        <div class="col-sm-3" id="addBotton">
-            <br />
-            <a class="btn btn-primary btn-user btn-block" onclick="addMedTraCiu(1)">
-                Agregar
-            </a>
-        </div>
+    </div>
+
+    <div class="form-group row">
+
         <div class="col-sm-3" id="editBotton">
             <br />
             <a class="btn btn-success btn-user btn-block" onclick="updateMedTraCiu(1)">
                 Editar
             </a>
         </div>
-        <div class="col-sm-1" id="addBotton">
-            <br />
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
-        </div>
+        <!-- 
+    <div class="col-sm-1" id="addBotton">
+        <br />
+        <a onclick="closeInput()" aria-label="Close">&#10006;</a>
+    </div>
+         -->
     </div>
     <div class="form-group row">
         <div class="col-sm-6 mb-3 mb-sm-0">
-            <label>Transporte:</label>
-            <select id="listaTransp" class="form-control form-control-user"></select>
+            <label>Nombre de Campo:</label>
+            <input type="text" class="form-control form-control-user" id="marca">
         </div>
         <div class="col-sm-6">
-            <label>Ciudadano:</label>
+            <label>Tipo de Dato:</label>
             <select id="listCiudadano" class="form-control form-control-user"></select>
         </div>
     </div>
+
     <div class="form-group row">
         <div class="col-sm-6 mb-3 mb-sm-0">
-            <label>Marca:</label>
-            <input type="text" class="form-control form-control-user" id="marca" >
+            <label>Es Null:</label>
+            <select id="listaTransp" class="form-control form-control-user"></select>
         </div>
         <div class="col-sm-6">
-            <label>Model:</label>
-            <input type="text" class="form-control form-control-user" id="model" >
+            <label>Tipo de Llave:</label>
+            <select id="listCiudadano" class="form-control form-control-user"></select>
         </div>
     </div>
-    <div class="form-group row">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-            <label>Placa:</label>
-            <input type="text" class="form-control form-control-user" id="placa" maxlength="8">
-        </div>
-        <div class="col-sm-6">
-            <label>Año:</label>
-            <input type="text" class="form-control form-control-user" id="ano" maxlength="4">
-        </div>
+
+    <div class="col-sm-3" id="addBotton">
+        <br />
+        <a class="btn btn-primary btn-user btn-block" onclick="addMedTraCiu(1)">
+            Agregar Campo
+        </a>
     </div>
+    <p>
+
+    </p>
+
 
     <div class="container-fluid">
         <div class="card shadow mb-4">
@@ -106,16 +110,16 @@
     </script>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="~/Theme/vendor/jquery/jquery.min.js"></script>
-    <script src="~/Theme/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="~/Theme/vendor/jquery/jquery.min.js"></script>
+        <script src="~/Theme/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="~/Theme/vendor/jquery-easing/jquery.easing.min.js"></script>
+        <!-- Core plugin JavaScript-->
+        <script src="~/Theme/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="~/Theme/js/sb-admin-2.min.js"></script>
+        <!-- Custom scripts for all pages-->
+        <script src="~/Theme/js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="~/Theme/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        <!-- Page level plugins -->
+        <script src="~/Theme/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 </body>
 </html>
