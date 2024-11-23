@@ -12,20 +12,19 @@ namespace Proyecto_LucyCaceres
     using System;
     using System.Collections.Generic;
     
-    public partial class MediosTransporte
+    public partial class TipoDocumentos
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MediosTransporte()
+        public TipoDocumentos()
         {
-            this.TransportexCiudadano = new HashSet<TransportexCiudadano>();
+            this.TipoDocumentosxCiudadano = new HashSet<TipoDocumentosxCiudadano>();
         }
     
-        public int id { get; set; }
+        public string codigo { get; set; }
         public string descripcion { get; set; }
-        public string tipo { get; set; }
-        public string categoria { get; set; }
+        public Nullable<decimal> precio { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TransportexCiudadano> TransportexCiudadano { get; set; }
+        public virtual ICollection<TipoDocumentosxCiudadano> TipoDocumentosxCiudadano { get; set; }
     }
 }

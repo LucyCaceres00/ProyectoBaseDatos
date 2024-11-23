@@ -12,17 +12,19 @@ namespace Proyecto_LucyCaceres
     using System;
     using System.Collections.Generic;
     
-    public partial class TransportexCiudadano
+    public partial class Roles
     {
-        public int id { get; set; }
-        public Nullable<int> idTransporte { get; set; }
-        public string ciudadanoId { get; set; }
-        public string marca { get; set; }
-        public string model { get; set; }
-        public string placa { get; set; }
-        public string ano { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Roles()
+        {
+            this.Usuarios = new HashSet<Usuarios>();
+        }
     
-        public virtual Ciudadanos Ciudadanos { get; set; }
-        public virtual MediosTransporte MediosTransporte { get; set; }
+        public int id { get; set; }
+        public string nombre { get; set; }
+        public string descripcion { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Usuarios> Usuarios { get; set; }
     }
 }

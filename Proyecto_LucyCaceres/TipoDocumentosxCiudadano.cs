@@ -28,7 +28,7 @@ namespace Proyecto_LucyCaceres
         public byte[] examenPsico { get; set; }
         public byte[] deposito { get; set; }
     
-        public virtual Ciudadano Ciudadano { get; set; }
-        public virtual TipoDocumento TipoDocumento { get; set; }
+        public virtual Ciudadanos Ciudadanos { get; set; }
+        public virtual TipoDocumentos TipoDocumentos { get; set; }
     }
 }

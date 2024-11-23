@@ -168,6 +168,9 @@
     <Compile Include="Ciudadano.cs">
       <DependentUpon>ModelDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Ciudadanos.cs">
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AdministradorController.cs" />
     <Compile Include="Controllers\CiudadanoesController.cs" />
     <Compile Include="Controllers\DigitadorController.cs" />
@@ -176,6 +179,7 @@
     <Compile Include="Controllers\MediosTransportesController.cs" />
     <Compile Include="Controllers\OficialController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\TablaController.cs" />
     <Compile Include="Controllers\TipoDocumentoesController.cs" />
     <Compile Include="Controllers\TipoDocumentosxCiudadanoesController.cs" />
     <Compile Include="Controllers\TransportexCiudadanoesController.cs" />
@@ -185,7 +189,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MediosTransporte.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
     <Compile Include="ModelDB.Context.cs">
       <AutoGen>True</AutoGen>
@@ -206,6 +210,7 @@
     <Compile Include="Models\CiudadanoVM.cs" />
     <Compile Include="Models\MediosTransporteVM.cs" />
     <Compile Include="Models\RolVM.cs" />
+    <Compile Include="Models\TablasVM.cs" />
     <Compile Include="Models\TipoDocumentosxCiudadanoVM.cs" />
     <Compile Include="Models\TipoDocumentoVM.cs" />
     <Compile Include="Models\TransportexCiudadanoVM.cs" />
@@ -214,20 +219,45 @@
     <Compile Include="Role.cs">
       <DependentUpon>ModelDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Roles.cs">
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SqlDatabase.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlDatabase.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SqlDatabase.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SqlDatabase.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlDatabase.edmx</DependentUpon>
+    </Compile>
     <Compile Include="TipoDocumento.cs">
       <DependentUpon>ModelDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="TipoDocumentos.cs">
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
+    </Compile>
     <Compile Include="TipoDocumentosxCiudadano.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
     <Compile Include="TransportexCiudadano.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
     <Compile Include="Usuario.cs">
       <DependentUpon>ModelDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Usuarios.cs">
+      <DependentUpon>SqlDatabase.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Anexos\14-11-2024.png" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -254,6 +284,7 @@
     <Content Include="Scripts\App\TipoDocumento.js" />
     <Content Include="Scripts\App\TipoDocumentosCiudadanos.js" />
     <Content Include="Scripts\App\Usuarios.js" />
+    <Content Include="Scripts\App\Tabla.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -289,6 +320,16 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="SqlDatabase.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SqlDatabase.edmx</DependentUpon>
+      <LastGenOutput>SqlDatabase.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="SqlDatabase.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>SqlDatabase.edmx</DependentUpon>
+      <LastGenOutput>SqlDatabase.cs</LastGenOutput>
+    </Content>
     <Content Include="Theme\css\sb-admin-2.css" />
     <Content Include="Theme\css\sb-admin-2.min.css" />
     <Content Include="Theme\img\Logo.png" />
@@ -2170,24 +2211,26 @@
     <Content Include="Views\Administrador\Usuario.cshtml" />
     <Content Include="Views\Administrador\MediosTrasporte.cshtml" />
     <Content Include="Views\Administrador\TipoDocumentos.cshtml" />
-    <Content Include="Views\Oficial\_LayoutOficial.cshtml" />
-    <Content Include="Views\Oficial\Index.cshtml" />
-    <Content Include="Views\Oficial\Usuario.cshtml" />
-    <Content Include="Views\Oficial\MediosTrasporte.cshtml" />
-    <Content Include="Views\Oficial\TipoDocumentos.cshtml" />
     <Content Include="Views\Administrador\TipoDocumentosCiudadanos.cshtml" />
     <Content Include="Views\Digitador\_LayoutDigitador.cshtml" />
     <Content Include="Views\Digitador\Index.cshtml" />
     <Content Include="Views\Administrador\MedioTransporteCiudadano.cshtml" />
-    <Content Include="Views\Oficial\MediosTrasporteCiudadano.cshtml" />
-    <Content Include="Views\Oficial\TipoDocumentosCiudadano.cshtml" />
     <Content Include="Views\Digitador\Ciudadano.cshtml" />
     <Content Include="Views\Digitador\TipoDocumentosCiudadano.cshtml" />
     <Content Include="Views\Digitador\MediosTrasporteCiudadano.cshtml" />
     <Content Include="Views\Digitador\TipoDocumentos.cshtml" />
+    <Content Include="Views\Administrador\Tablas.cshtml" />
+    <EntityDeploy Include="SqlDatabase.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SqlDatabase.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="SqlDatabase.edmx.diagram">
+      <DependentUpon>SqlDatabase.edmx</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Tabla\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

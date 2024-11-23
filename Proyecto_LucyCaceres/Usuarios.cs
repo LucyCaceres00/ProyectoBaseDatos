@@ -12,17 +12,17 @@ namespace Proyecto_LucyCaceres
     using System;
     using System.Collections.Generic;
     
-    public partial class TransportexCiudadano
+    public partial class Usuarios
     {
-        public int id { get; set; }
-        public Nullable<int> idTransporte { get; set; }
-        public string ciudadanoId { get; set; }
-        public string marca { get; set; }
-        public string model { get; set; }
-        public string placa { get; set; }
-        public string ano { get; set; }
+        public string dni { get; set; }
+        public string nombre { get; set; }
+        public string apellido { get; set; }
+        public string genero { get; set; }
+        public string email { get; set; }
+        public string celular { get; set; }
+        public string contrasena { get; set; }
+        public Nullable<int> rolId { get; set; }
     
-        public virtual Ciudadanos Ciudadanos { get; set; }
-        public virtual MediosTransporte MediosTransporte { get; set; }
+        public virtual Roles Roles { get; set; }
     }
 }

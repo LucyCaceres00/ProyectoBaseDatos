@@ -1,15 +1,15 @@
-﻿const urlUsu = '/api/Usuarios';
+﻿let todos = [];
 
-function getUsuarios() {
-    fetch(urlUsu)
+function getTablas() {
+    let isSql = (localStorage.getItem('isSql') === 'true');
+    fetch(`/api/Tabla/getTablas?isSql=${isSql}`)
         .then(response => response.json())
-        .then(data => MostrarUsuarios(data))
+        .then(data => mostrarTablas(data))
         .catch(error => console.error("No Se Logro Cargar Datos", error));
 }
 
-
-function MostrarUsuarios(data) {
-    const tBody = document.getElementById('DetUsuario');
+function mostrarTablas(data) {
+    const tBody = document.getElementById('listadoTablas');
     tBody.innerHTML = '';
 
     const button = document.createElement('button');
@@ -17,78 +17,57 @@ function MostrarUsuarios(data) {
 
         let editButton = button.cloneNode(false);
         editButton.innerText = 'Editar';
-        editButton.setAttribute('onclick', `editUsuario('${item.dni}')`);
+        editButton.setAttribute('onclick', `editTabla('${item.nombre}')`);
 
+        let vaciarButton = button.cloneNode(false);
+        vaciarButton.innerText = 'Vaciar';
+        vaciarButton.setAttribute('onclick', `deleteUsu('${item.nombre}')`);
 
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = 'Eliminar';
-        deleteButton.setAttribute('onclick', `deleteUsu('${item.dni}')`);
+        deleteButton.setAttribute('onclick', `deleteUsu('${item.nombre}')`);
 
         let tr = tBody.insertRow();
 
         let td0 = tr.insertCell(0);
-        let txtId = document.createTextNode(item.dni);
-        td0.appendChild(txtId);
+        let txtNombre = document.createTextNode(item.nombre);
+        td0.appendChild(txtNombre);
 
-        let td2 = tr.insertCell(1);
-        let txtnombre = document.createTextNode(item.nombre);
-        td2.appendChild(txtnombre);
+        let td1 = tr.insertCell(1);
+        let txtFechaCrea = document.createTextNode(new Date(item.fechaCreacion).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }));
+        td1.appendChild(txtFechaCrea);
 
-        let td3 = tr.insertCell(2);
-        let txtapellido = document.createTextNode(item.apellido);
-        td3.appendChild(txtapellido);
+        let td2 = tr.insertCell(2);
+        td2.appendChild(editButton);
 
-        let td4 = tr.insertCell(3);
-        let txtgenero = document.createTextNode(item.genero);
-        td4.appendChild(txtgenero);
+        let td3 = tr.insertCell(3);
+        td3.appendChild(vaciarButton);
 
-        let td5 = tr.insertCell(4);
-        let txtemail = document.createTextNode(item.email);
-        td5.appendChild(txtemail);
-
-        let td6 = tr.insertCell(5);
-        let txtcelular = document.createTextNode(item.celular);
-        td6.appendChild(txtcelular);
-
-        let td7 = tr.insertCell(6);
-        let txtcontrasena = document.createTextNode(item.contrasena);
-        td7.appendChild(txtcontrasena);
-
-        let td8 = tr.insertCell(7);
-        let txtrolId = document.createTextNode(item.rol);
-        td8.appendChild(txtrolId);
-
-        let td9 = tr.insertCell(8);
-        td9.appendChild(editButton);
-
-        let td10 = tr.insertCell(9);
-        td10.appendChild(deleteButton);
+        let td4 = tr.insertCell(4);
+        td4.appendChild(deleteButton);
     });
     todos = data;
 }
 //Mostrar Editor De Datos
 
 function deleteUsu(usuId) {
-    fetch(`${urlUsu}/${usuId}`, {
+    fetch(`${urlTabla}/${usuId}`, {
         method: 'DELETE'
     })
         .then(() => getUsuarios())
         .catch(error => console.error('Error al eliminar el el usuario.', error));
 }
 
-function editUsuario(dniUsu) {
+function editTabla(nombre) {
     document.getElementById('editBotton').style.display = 'block';
     document.getElementById('addBotton').style.display = 'none';
 
-    const item = todos.find(item => item.dni === dniUsu);
-    document.getElementById('dniNewUser').value = item.dni;
-    document.getElementById('nameNewUser').value = item.nombre;
-    document.getElementById('lastNewUser').value = item.apellido;
-    document.getElementById('emailNewUser').value = item.email;
-    document.getElementById('genderNewUser').value = item.genero;
-    document.getElementById('celNewUser').value = item.celular;
-    document.getElementById('passNewUser').value = item.contrasena;
-    document.getElementById('rolNewUser').value = item.rolId;
+    const item = todos.find(item => item.nombre === nombre);
+    document.getElementById('tableName').value = item.nombre;
 }
 
 function closeInput() {
@@ -109,7 +88,7 @@ function updateUsuario() {
         contrasena: document.getElementById('passNewUser').value.trim(),
         rolId: parseInt(document.getElementById('rolNewUser').value),
     };
-    fetch(`${urlUsu}/${dniUsuario}`, {
+    fetch(`${urlTabla}/${dniUsuario}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -154,8 +133,8 @@ function registrarUsuario() {
         contrasena: password,
         rolId: 2
     };
-   
-    fetch(urlUsu, {
+
+    fetch(urlTabla, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -187,8 +166,8 @@ function generarContrasena() {
     return contrasena;
 }
 
-function mostrarRegistrado(dniUser){
-    fetch(`${urlUsu}/${dniUser}`, {
+function mostrarRegistrado(dniUser) {
+    fetch(`${urlTabla}/${dniUser}`, {
         method: 'GET'
     }).then(response => response.json())
         .then(data => displayShowInfo(data))
@@ -206,15 +185,31 @@ function displayShowInfo(item) {
 }
 
 function confirmarAcceso() {
-    let passwordUsuario = document.getElementById('passwordUsuario').value.trim();
-    if (passwordUsuario == 12345) {
-        let isSql = (document.getElementById('tipoConexion').value === 'true');
-        localStorage.setItem('isSql', isSql);
-        var rolAdmin = document.getElementById('rolAdmin').value;
-        window.location.href = rolAdmin;
-    } else {
-        mostrarModalError("Contraseña incorrecta.");
-    }
+    let dni = document.getElementById('dni').value.trim();
+    fetch(`${urlTabla}/codigo/${dni}`, {
+        method: 'GET'
+    }).then(response => response.json())
+        .then(data => {
+            let passwordUsuario = document.getElementById('passwordUsuario').value.trim();
+            if (data.length > 0 || data.contrasena == passwordUsuario) {
+                localStorage.setItem('dniUser', dni);
+                if (data.rolId == 1) {
+                    var rolAdmin = document.getElementById('rolAdmin').value;
+                    window.location.href = rolAdmin;
+                }
+                if (data.rolId == 2) {
+                    var rolDigitador = document.getElementById('rolDigitador').value;
+                    window.location.href = rolDigitador;
+                }
+                if (data.rolId == 3) {
+                    var rolOficial = document.getElementById('rolOficial').value;
+                    window.location.href = rolOficial;
+                }
+            } else {
+                mostrarModalError("No se encontro ningún usuario con ese código, por favor registresé o comuniquesé con un administrador.");
+            }
+
+        }).catch(error => console.error('Error al iniciar sesión.', error));
 }
 
 function mostrarModalError(mensaje) {
@@ -238,7 +233,7 @@ function registrarNuevoUsuario() {
         rolId: parseInt(document.getElementById('rolNewUser').value),
     };
 
-    fetch(urlUsu, {
+    fetch(urlTabla, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -263,7 +258,7 @@ function limpiarUsuario() {
 }
 
 function getUsuariosOficial() {
-    fetch(`${urlUsu}/oficial`)
+    fetch(`${urlTabla}/oficial`)
         .then(response => response.json())
         .then(data => MostrarUsuariosOficial(data))
         .catch(error => console.error("No Se Logro Cargar Datos", error));
@@ -329,7 +324,7 @@ function MostrarUsuariosOficial(data) {
 }
 
 function deleteUsuOficial(usuId) {
-    fetch(`${urlUsu}/${usuId}`, {
+    fetch(`${urlTabla}/${usuId}`, {
         method: 'DELETE'
     })
         .then(() => getUsuariosOficial())
@@ -348,7 +343,7 @@ function updateRolOficial() {
         contrasena: document.getElementById('passNewUser').value.trim(),
         rolId: 2,
     };
-    fetch(`${urlUsu}/${dniUsuario}`, {
+    fetch(`${urlTabla}/${dniUsuario}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -375,7 +370,7 @@ function addRolOficial() {
         rolId: parseInt(document.getElementById('rolNewUser').value),
     };
 
-    fetch(urlUsu, {
+    fetch(urlTabla, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Proyecto_LucyCaceres;
 using Proyecto_LucyCaceres.Models;
 
 namespace Proyecto_LucyCaceres.Controllers

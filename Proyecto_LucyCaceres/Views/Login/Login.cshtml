@@ -29,9 +29,11 @@
                                         <h1 class="h4 text-gray-900 mb-4">Iniciar sesión</h1>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" class="form-control form-control-user"
-                                               id="dni" aria-describedby="emailHelp"
-                                               placeholder="Ingres su número de identidad">
+                                        <label>Tipo de conección:</label>
+                                        <select name="roles" id="tipoConexion" class="form-control form-control-user" read>
+                                            <option value=false>MySQL</option>
+                                            <option value=true>SQL</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <input type="password" class="form-control form-control-user"
@@ -40,11 +42,6 @@
                                     <a class="btn btn-primary btn-user btn-block" onclick="confirmarAcceso()">
                                         Iniciar Sesión
                                     </a>
-                                    <a class="btn btn-success btn-user btn-block" onclick="window.location.href='@Url.Action("Registro", "Login")'">
-                                        Registrarse
-                                    </a>
-                                    <hr>
-
                                 </div>
                             </div>
                         </div>
@@ -67,8 +64,6 @@
             </div>
         </div>
         <input type="hidden" id="rolAdmin" value="@Url.Action("Index", "Administrador")" />
-        <input type="hidden" id="rolOficial" value="@Url.Action("Index", "Oficial")" />
-        <input type="hidden" id="rolDigitador" value="@Url.Action("Index", "Digitador")" />
         <!-- Bootstrap core JavaScript-->
         <script src="~/Theme/vendor/jquery/jquery.min.js"></script>
         <script src="~/Theme/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
