@@ -216,3 +216,46 @@ function mostrarModalExito(mensaje) {
     mensajeModal.textContent = mensaje;
     $(errorModal).modal('show');
 }
+
+function agregarCampos() {
+    const isSql = (localStorage.getItem('isSql') === 'true');
+    if (isSql) {
+        registrarCampoSQL();
+    }
+    else {
+        getTablasMySQL();
+    }
+}
+
+function registrarCampoSQL() {
+    const item = {
+        nombre: document.getElementById('nombreCampo').value,
+        tipoDato: document.getElementById('listaTipoDatos').value,
+        especificacion: document.getElementById('espeDato').value,
+        isNull: document.getElementById('isNull').value,
+        isPrimaryKey: document.getElementById('isPrimaryKey').value
+    };
+
+    fetch(`/api/agregarColumna/${nombreTabla}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    mostrarModalError(data.message || 'Error al eliminar la columna.');
+                }
+                else {
+                    mostrarModalExito(data.message || 'Se elimino la columna correctamente.');
+                }
+                return data;
+            });
+        })
+        .then(() => getCamposTablaSQL())
+        .catch(error => mostrarModalError(error));
+}
+

@@ -97,5 +97,55 @@ namespace Proyecto_LucyCaceres.Controllers
                 return InternalServerError(ex);
             }
         }
+
+        [HttpPost]
+        [Route("api/agregarColumna/{nombreTabla}")]
+        public IHttpActionResult AgregarColumna(string nombreTabla, [FromBody] CamposVM columna)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(columna.nombre) || string.IsNullOrEmpty(columna.tipoDato))
+                {
+                    return BadRequest("El nombre del campo y el tipo de dato son obligatorios.");
+                }
+
+                var campo = sql.Database.SqlQuery<int>(@"
+                                    SELECT COUNT(*)
+                                    FROM  @p0 ",
+                                    nombreTabla).Single();
+
+                if (campo > 0 && !columna.isNull)
+                {
+                    return BadRequest("El campo no se puede crear de tipo opcional debido a que ya existen registros en la tabal seleccionada.");
+                }
+                string tipoDatoCompleto = columna.tipoDato;
+                if (!string.IsNullOrEmpty(columna.especificacion))
+                {
+                    tipoDatoCompleto += $"({columna.especificacion})";
+                }
+    
+                string isNullClause = columna.isNull ? "NULL" : "NOT NULL";
+
+                string sqlCommand = $@"
+                    ALTER TABLE {nombreTabla}
+                    ADD {columna.nombre} {tipoDatoCompleto} {isNullClause}";
+
+                sql.Database.ExecuteSqlCommand(sqlCommand);
+
+                if (columna.isPrimaryKey == 1)
+                {
+                    string primaryKeyCommand = $@"
+                    ALTER TABLE {nombreTabla}
+                    ADD CONSTRAINT PK_{nombreTabla}_{columna.nombre} PRIMARY KEY ({columna.nombre})";
+                    sql.Database.ExecuteSqlCommand(primaryKeyCommand);
+                }
+                return Ok("Columna agregada exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }
