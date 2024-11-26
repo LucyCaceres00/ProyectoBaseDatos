@@ -50,5 +50,9 @@ namespace Proyecto_LucyCaceres.Controllers
         {
             return View();
         }
+        public ActionResult Campos()
+        {
+            return View();
+        }
     }
 }

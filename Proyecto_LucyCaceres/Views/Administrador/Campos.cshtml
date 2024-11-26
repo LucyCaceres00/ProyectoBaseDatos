@@ -1,8 +1,9 @@
 ﻿
 @{
-    ViewBag.Title = "Tablas";
+    ViewBag.Title = "Campos";
     Layout = "~/Views/Administrador/_LayoutAdmin.cshtml";
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +13,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>DriveEase-Administardor</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link href="~/Theme/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
@@ -19,12 +23,14 @@
     <link href="~/Theme/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="form-group row">
-        <div class="col-sm-7 mb-3 mb-sm-0" style="margin-left: 21px;">
-            <label>Nombre de tabla:</label>
-            <input type="text" class="form-control form-control-user" id="tableName">
+
+
+    <div class="form-group row" style="margin-left: 18px;">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <label>Tabla:</label>
+            <select id="listaTablas" class="form-control form-control-user" onchange="listadoCampos()"></select>
         </div>
-        <div class="col-sm-3" id="addBotton" style="margin-top: 30px;">        
+        <div class="col-sm-3" id="addBotton" style="margin-top: 30px;">
             <a class="btn btn-primary btn-user btn-block" onclick="registrarTabla()">
                 Agregar
             </a>
@@ -38,32 +44,61 @@
             <a onclick="closeInput()" aria-label="Close">&#10006;</a>
         </div>
     </div>
+    <div class="form-group row" style="margin-left: 18px;">
+        <div class="col-sm-4 mb-3 mb-sm-0">
+            <label>Nombre de Campo:</label>
+            <input type="text" class="form-control form-control-user" id="nombreCampo">
+        </div>
+        <div class="col-sm-3">
+            <label>Tipo de Dato:</label>
+            <select id="listaTipoDatos" class="form-control form-control-user" onchange="verificarTipoDato()"></select>
+        </div>
+        <div class="col-sm-3 mb-3 mb-sm-0">
+            <label>Especificación de Campo:</label>
+            <input type="text" class="form-control form-control-user" id="espeDato" disabled="disabled">
+        </div>
+    </div>
 
+    <div class="form-group row" style="margin-left: 18px;">
+        <div class="col-sm-5 mb-3 mb-sm-0">
+            <label>Es opcional:</label>
+            <select name="roles" id="isNull" class="form-control form-control-user" read>
+                <option value=false>No</option>
+                <option value=true>Sí</option>
+            </select>
+        </div>
+        <div class="col-sm-5">
+            <label>Es llave primaria:</label>
+            <select name="roles" id="isPrimaryKey" class="form-control form-control-user" read>
+                <option value=false>No</option>
+                <option value=true>Sí</option>
+            </select>
+        </div>
+    </div>
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-4">
-                <h6 class="m-0 font-weight-bold text-primary">Listado de tablas</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Listado de campos por tabla</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Id</th>
                                 <th>Nombre</th>
-                                <th>Fecha creación</th>
-                                <th>Editar registro</th>
-                                <th>Vaciar tabla</th>
-                                <th>Eliminar tabla</th>
+                                <th>Tipo</th>
+                                <th>Opcional</th>
+                                <th>Llave primaría</th>
+                                <th>Editar campo</th>
+                                <th>Eliminar campo</th>
                             </tr>
                         </thead>
-                        <tbody id="listadoTablas"></tbody>
+                        <tbody id="detalleTabla"></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Modal de éxito -->
     <div class="modal fade" id="modalExito" tabindex="-1" role="dialog" aria-labelledby="modalExitoLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -83,7 +118,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal de error -->
     <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="modalErrorLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -103,7 +137,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal de confirmación -->
     <div class="modal fade" id="confirmacionModal" tabindex="-1" role="dialog" aria-labelledby="modalErrorLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -119,16 +152,16 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" id="btnElimar" onclick="eliminarTabla()">Confirmar</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" id="btnElimar" onclick="eliminarCampo()">Confirmar</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="~/Scripts/App/Tabla.js" asp-append-version="true"></script>
+    <script src="~/Scripts/App/Campos.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        getListado();
-        closeInput()
+        listaTablas();
+        listaTipoDatos();
+        closeInput();
     </script>
 
     <!-- Bootstrap core JavaScript-->
@@ -142,11 +175,7 @@
     <script src="~/Theme/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="~/Theme/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="~/Theme/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="~/Scripts/App/Usuarios.js" asp-append-version="true"></script>
 </body>
 </html>
 

@@ -172,6 +172,7 @@
       <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AdministradorController.cs" />
+    <Compile Include="Controllers\CamposController.cs" />
     <Compile Include="Controllers\CiudadanoesController.cs" />
     <Compile Include="Controllers\DigitadorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -207,6 +208,7 @@
       <DependentUpon>ModelDB.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ByteArrayImageConversion.cs" />
+    <Compile Include="Models\CamposVM.cs" />
     <Compile Include="Models\CiudadanoVM.cs" />
     <Compile Include="Models\MediosTransporteVM.cs" />
     <Compile Include="Models\RolVM.cs" />
@@ -276,6 +278,7 @@
       <DependentUpon>ModelDB.edmx</DependentUpon>
       <LastGenOutput>ModelDB.cs</LastGenOutput>
     </Content>
+    <Content Include="Scripts\App\Campos.js" />
     <Content Include="Scripts\App\Ciudadano.js" />
     <Content Include="Scripts\App\Dashbord.js" />
     <Content Include="Scripts\App\MediosTransporte.js" />
@@ -2227,6 +2230,8 @@
     <Content Include="SqlDatabase.edmx.diagram">
       <DependentUpon>SqlDatabase.edmx</DependentUpon>
     </Content>
+    <Content Include="Views\Administrador\Modales.cshtml" />
+    <Content Include="Views\Administrador\Campos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
