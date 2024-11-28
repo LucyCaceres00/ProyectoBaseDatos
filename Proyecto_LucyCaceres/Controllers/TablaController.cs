@@ -12,6 +12,8 @@ namespace Proyecto_LucyCaceres.Controllers
     public class TablaController : ApiController
     {
         private SqlDatabaseEntities sql = new SqlDatabaseEntities();
+        private MySqlDatabaseEntities mySql = new MySqlDatabaseEntities();
+
         //private TransitoEntities db = new TransitoEntities();
         // GET: Tabla
         [HttpGet]
@@ -39,18 +41,17 @@ namespace Proyecto_LucyCaceres.Controllers
         [HttpGet]
         [Route("api/Tabla/getTablasMySql")]
         [ResponseType(typeof(TablasVM))]
-        public IHttpActionResult getTablasMySql(bool isSql)
+        public IHttpActionResult getTablasMySQL()
         {
             List<TablasVM> tablas = new List<TablasVM>();
-
-            //Obtiene el listado de tablas
-            tablas = sql.Database.SqlQuery<TablasVM>(@"
+            tablas = mySql.Database.SqlQuery<TablasVM>(@"
                         SELECT 
-                             object_id AS Id,
-                            name AS nombre,
-                            create_date AS fechaCreacion
+                            TABLE_NAME AS Nombre,
+                            CREATE_TIME AS FechaCreacion
                         FROM 
-                            sys.tables").ToList(); ;
+                            information_schema.TABLES
+                        WHERE 
+                            TABLE_SCHEMA = 'transito'").ToList();
 
             if (tablas.Count == 0)
             {

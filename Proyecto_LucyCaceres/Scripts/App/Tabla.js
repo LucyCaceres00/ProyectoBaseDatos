@@ -81,8 +81,33 @@ function registrarTabla() {
         registrarTablaSQL();
     }
     else {
-        getTablasMySQL();
+        registrarTablaMySQL();
     }
+}
+
+function registrarTablaMySQL() {
+    const nombre = document.getElementById('tableName').value.trim();
+
+    fetch(`/api/Tabla/createTableSql/${nombre}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        return response.json().then(data => {
+            if (!response.ok) {
+                mostrarModalError(data.message || 'Error al crear la tabla');
+            }
+            else {
+                mostrarModalExito(data.message || 'La tabla se creó correctamente.');
+            }
+            return data;
+        });
+    })
+        .then(() => getListado())
+        .then(() => limpiarCampo())
+        .catch(error => mostrarModalError(error));
 }
 
 function registrarTablaSQL() {
