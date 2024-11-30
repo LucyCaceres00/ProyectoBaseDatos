@@ -142,6 +142,50 @@ namespace Proyecto_LucyCaceres.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("api/Tabla/createTableMySql/{tableId}/{nombreTabla}")]
+        public IHttpActionResult updateMySQL(int tableId, string nombreTabla)
+        {
+            if (string.IsNullOrWhiteSpace(nombreTabla))
+            {
+                return Content(HttpStatusCode.BadRequest, new { message = "El nombre de la tabla es requerido." });
+            }
+
+            try
+            {
+                // Verificar si la tabla con el tableId existe
+                var currentTableName = sql.Database.SqlQuery<string>($@"
+                            SELECT table_name 
+                            FROM information_schema.tables 
+                            WHERE table_schema = DATABASE() AND table_id = @p0", tableId).SingleOrDefault();
+
+                if (currentTableName == null)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"No se encontró ninguna tabla con el Id '{tableId}'." });
+                }
+
+                // Verificar si la nueva tabla ya existe
+                var newTableExists = sql.Database.SqlQuery<int>($@"
+                            SELECT COUNT(*) 
+                            FROM information_schema.tables 
+                            WHERE table_schema = DATABASE() AND table_name = @p0", nombreTabla).SingleOrDefault() > 0;
+
+                if (newTableExists)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"La tabla '{nombreTabla}' ya existe." });
+                }
+
+                // Renombrar la tabla
+                sql.Database.ExecuteSqlCommand($@"
+                            ALTER TABLE {currentTableName} RENAME TO {nombreTabla}");
+
+                return Content(HttpStatusCode.OK, new { message = $"La tabla '{currentTableName}' ha sido renombrada a '{nombreTabla}' exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
 
         [HttpPost]
         [Route("api/Tabla/createTableMySql/{nombreTabla}")]
