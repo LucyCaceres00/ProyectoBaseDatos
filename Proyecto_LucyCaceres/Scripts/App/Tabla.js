@@ -94,7 +94,7 @@ function registrarTablaMySQL() {
         return;
     }
 
-    fetch(`/api/Tabla/createTableSql/${nombre}`, {
+    fetch(`/api/Tabla/createTableMySql/${nombre}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -186,7 +186,7 @@ function updateTablaSQL() {
     return false;
 }
 
-function updateTablaSQL() {
+function updateTablaMySQL() {
     const idTabla = document.getElementById('tableId').value.trim(); 
     const nombre = document.getElementById('tableName').value.trim();
 
@@ -195,7 +195,7 @@ function updateTablaSQL() {
         return;
     }
 
-    fetch(`/api/Tabla/updateTableSql/${idTabla}/${nombre}`, { 
+    fetch(`/api/Tabla/updateTableMySql/${idTabla}/${nombre}`, { 
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
