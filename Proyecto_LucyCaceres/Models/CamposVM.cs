@@ -13,5 +13,6 @@ namespace Proyecto_LucyCaceres.Models
         public string especificacion { get; set; }
         public bool isNull { get; set; }
         public int isPrimaryKey { get; set; }
+        public bool primaryKey { get; set; }
     }
 }

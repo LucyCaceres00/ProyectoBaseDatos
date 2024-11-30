@@ -13,7 +13,7 @@
     <title>SB Admin 2 - Administrador</title>
 
     <!-- Custom fonts for this template-->
-    <link href="~/Theme/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="~/Theme/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
 
@@ -31,9 +31,9 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" onclick="window.location.href='@Url.Action("Index", "Administrador")'">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fas fa-cube"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">DriveEase</div>
+                <div class="sidebar-brand-text mx-3">DbControl</div>
             </a>
 
             <!-- Divider -->
@@ -41,14 +41,14 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Usuarios
+                Acciones
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseUsuarios"
                    aria-expanded="true" aria-controls="collapseUsuarios">
-                    <i class="fas fa-fw fa-user"></i>
+                    <i class="fas fa-fw fa-table"></i>
                     <span>Tabla</span>
                 </a>
                 <div id="collapseUsuarios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -58,107 +58,28 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" onclick="window.location.href='@Url.Action("Campos", "Administrador")'">Campos</a>
                     </div>
-
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" onclick="window.location.href='@Url.Action("Relaciones", "Administrador")'">Relaciones</a>
+                    </div>
                 </div>
             </li>
-
+            <!-- Divider -->
+            <hr class="sidebar-divider">
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseRoles"
                    aria-expanded="true" aria-controls="collapseRoles">
-                    <i class="fas fa-fw fa-low-vision"></i>
+                    <i class="fas fa-fw fa-list-alt"></i>
                     <span>Query</span>
                 </a>
                 <div id="collapseRoles" class="collapse" aria-labelledby="headingUtilities"
                      data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" onclick="window.location.href='@Url.Action("Rol", "Administrador")'">Listado</a>
+                        <a class="collapse-item" onclick="window.location.href='@Url.Action("Querys", "Administrador")'">Listado</a>
                     </div>
                 </div>
             </li>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Ciudadanos
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseCiudadanos"
-                   aria-expanded="true" aria-controls="collapseCiudadanos">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>Ciudadanos</span>
-                </a>
-                <div id="collapseCiudadanos" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" onclick="window.location.href='@Url.Action("Ciudadano", "Administrador")'">Listado</a>
-                    </div>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTransxCiuda"
-                   aria-expanded="true" aria-controls="collapseTransxCiuda">
-                    <i class="fas fa-fw fa-car-side"></i>
-                    <span>Transportes Ciudadano</span>
-                </a>
-                <div id="collapseTransxCiuda" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" onclick="window.location.href='@Url.Action("MedioTransporteCiudadano", "Administrador")'">Listado</a>
-                    </div>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDocument"
-                   aria-expanded="true" aria-controls="collapseDocument">
-                    <i class="fas fa-fw fa-solid fa-file"></i>
-                    <span>Documentos Ciudadano</span>
-                </a>
-                <div id="collapseDocument" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" onclick="window.location.href='@Url.Action("TipoDocumentosCiudadanos", "Administrador")'">Listado</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Componentes
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMedTrans"
-                   aria-expanded="true" aria-controls="collapseMedTrans">
-                    <i class="fas fa-fw fa-car"></i>
-                    <span>Medios Transporte</span>
-                </a>
-                <div id="collapseMedTrans" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" onclick="window.location.href='@Url.Action("MediosTrasporte", "Administrador")'">Listado</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTpDoc"
-                   aria-expanded="true" aria-controls="collapseTpDoc">
-                    <i class="fas fa-fw fa-file-alt"></i>
-                    <span>Tipo Documentos</span>
-                </a>
-                <div id="collapseTpDoc" class="collapse" aria-labelledby="headingUtilities"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" onclick="window.location.href='@Url.Action("TipoDocumentos", "Administrador")'">Listado</a>
-                    </div>
-                </div>
-            </li>
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">

@@ -54,5 +54,13 @@ namespace Proyecto_LucyCaceres.Controllers
         {
             return View();
         }
+        public ActionResult Relaciones()
+        {
+            return View();
+        }
+        public ActionResult Querys()
+        {
+            return View();
+        }
     }
 }

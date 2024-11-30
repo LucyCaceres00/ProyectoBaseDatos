@@ -10,7 +10,7 @@ namespace Proyecto_LucyCaceres.Controllers
     public class CamposController : ApiController
     {
         private SqlDatabaseEntities sql = new SqlDatabaseEntities();
-
+        private MySqlDatabaseEntities mySql = new MySqlDatabaseEntities();
 
         [HttpGet]
         [Route("api/campos/getDataType")]
@@ -100,46 +100,70 @@ namespace Proyecto_LucyCaceres.Controllers
 
         [HttpPost]
         [Route("api/agregarColumna/{nombreTabla}")]
-        public IHttpActionResult AgregarColumna(string nombreTabla, [FromBody] CamposVM columna)
+        public IHttpActionResult AgregarColumnaSql(string nombreTabla, [FromBody] CamposVM columna)
         {
             try
             {
                 if (string.IsNullOrEmpty(columna.nombre) || string.IsNullOrEmpty(columna.tipoDato))
                 {
-                    return BadRequest("El nombre del campo y el tipo de dato son obligatorios.");
+                    return Content(HttpStatusCode.BadRequest, new { message = $"El nombre del campo y el tipo de dato son obligatorios."});
                 }
 
-                var campo = sql.Database.SqlQuery<int>(@"
-                                    SELECT COUNT(*)
-                                    FROM  @p0 ",
-                                    nombreTabla).Single();
-
+                //Validacion para no agregar no columnas nulas en una tabla con registros.
+                string query = $@" SELECT COUNT(*) FROM {nombreTabla}";
+                var campo = sql.Database.SqlQuery<int>(query).Single();
                 if (campo > 0 && !columna.isNull)
                 {
-                    return BadRequest("El campo no se puede crear de tipo opcional debido a que ya existen registros en la tabal seleccionada.");
+                    return Content(HttpStatusCode.BadRequest, new { message = $"El campo no se puede crear de tipo opcional debido a que ya existen registros en la tabla seleccionada." });
                 }
+
+                //Validacion para verificar que no exista columna con el mismo nombre
+                string getColumnaQuery = $@"
+                        SELECT COUNT(*)
+                        FROM INFORMATION_SCHEMA.COLUMNS
+                        WHERE TABLE_NAME = '{nombreTabla}'
+                          AND COLUMN_NAME = '{columna.nombre}'";
+
+                var columnaExiste = sql.Database.SqlQuery<int>(getColumnaQuery).Single();
+
+                if (columnaExiste > 0)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"Ya existe un campo con ese nombre en la tabla seleccionada."});
+                }
+
                 string tipoDatoCompleto = columna.tipoDato;
                 if (!string.IsNullOrEmpty(columna.especificacion))
                 {
                     tipoDatoCompleto += $"({columna.especificacion})";
                 }
-    
+
+                string checkPrimaryKeyQuery = $@"
+                                                SELECT COUNT(*)
+                                                FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+                                                WHERE TABLE_NAME = '{nombreTabla}'
+                                                  AND CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+                var primaryKeyExists = sql.Database.SqlQuery<int>(checkPrimaryKeyQuery).Single();
+
+                if (primaryKeyExists > 0 && columna.primaryKey)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"La tabla ya tiene una clave primaria."});
+                }
+
                 string isNullClause = columna.isNull ? "NULL" : "NOT NULL";
 
                 string sqlCommand = $@"
                     ALTER TABLE {nombreTabla}
                     ADD {columna.nombre} {tipoDatoCompleto} {isNullClause}";
-
                 sql.Database.ExecuteSqlCommand(sqlCommand);
-
-                if (columna.isPrimaryKey == 1)
+                if (columna.primaryKey)
                 {
                     string primaryKeyCommand = $@"
                     ALTER TABLE {nombreTabla}
                     ADD CONSTRAINT PK_{nombreTabla}_{columna.nombre} PRIMARY KEY ({columna.nombre})";
                     sql.Database.ExecuteSqlCommand(primaryKeyCommand);
                 }
-                return Ok("Columna agregada exitosamente.");
+                return Content(HttpStatusCode.OK, new { message = $"La columna '{columna.nombre}' ha sido creada exitosamente." });
             }
             catch (Exception ex)
             {
@@ -147,5 +171,92 @@ namespace Proyecto_LucyCaceres.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("api/editarColumna/{nombreTabla}/{nombreCampo}")]
+        public IHttpActionResult EditarColumnaSql(string nombreTabla, string nombreCampo, [FromBody] CamposVM columna)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(columna.nombre) || string.IsNullOrEmpty(columna.tipoDato))
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"El nombre del campo y el tipo de dato son obligatorios." });
+                }
+
+                //erificar si el nuevo nombre de columna ya existe (si el nombre será cambiado)
+                if (!string.Equals(nombreCampo, columna.nombre, StringComparison.OrdinalIgnoreCase))
+                {
+                    string queryExisteColumna = $@"
+                            SELECT COUNT(*)
+                            FROM INFORMATION_SCHEMA.COLUMNS
+                            WHERE TABLE_NAME = '{nombreTabla}'
+                              AND COLUMN_NAME = '{columna.nombre}'";
+                    var existeColumna = sql.Database.SqlQuery<int>(queryExisteColumna).Single();
+
+                    if (existeColumna > 0)
+                    {
+                        return Content(HttpStatusCode.BadRequest, new { message = $"Ya existe un campo con el nombre '{columna.nombre}' en la tabla seleccionada." });
+                    }
+                }
+
+                // Si la tabla tiene registros y la columna será NOT NULL
+                if (!columna.isNull)
+                {
+                    string queryHayDatos = $@"SELECT COUNT(*) FROM {nombreTabla}";
+                    var hayDatos = sql.Database.SqlQuery<int>(queryHayDatos).Single();
+                    if (hayDatos > 0)
+                    {
+                        return Content(HttpStatusCode.BadRequest, new { message = $"La columna no puede cambiarse a 'NOT NULL' porque la tabla tiene registros existentes." });
+                    }
+                }
+
+                string tipoDatoCompleto = columna.tipoDato;
+                if (!string.IsNullOrEmpty(columna.especificacion))
+                {
+                    tipoDatoCompleto += $"({columna.especificacion})";
+                }
+                string isNullTipe = columna.isNull ? "NULL" : "NOT NULL";
+
+                string alterColumn = $@"
+                        ALTER TABLE {nombreTabla}
+                        ALTER COLUMN {nombreCampo} {tipoDatoCompleto} {isNullTipe}";
+                sql.Database.ExecuteSqlCommand(alterColumn);
+
+                // Renombrar columna
+                if (!string.Equals(nombreCampo, columna.nombre, StringComparison.OrdinalIgnoreCase))
+                {
+                    string renameColumnCommand = $@"
+                            EXEC sp_rename '{nombreTabla}.{nombreCampo}', '{columna.nombre}', 'COLUMN'";
+                    sql.Database.ExecuteSqlCommand(renameColumnCommand);
+                }
+             
+                if (columna.primaryKey)
+                {
+                    // Verificar si ya existe una clave primaria en la tabla
+                    string checkPrimaryKeyQuery = $@"
+                            SELECT COUNT(*)
+                            FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+                            WHERE TABLE_NAME = '{nombreTabla}'
+                              AND CONSTRAINT_TYPE = 'PRIMARY KEY'";
+                    var primaryKeyExists = sql.Database.SqlQuery<int>(checkPrimaryKeyQuery).Single();
+
+                    if (primaryKeyExists > 0)
+                    {
+                        return Content(HttpStatusCode.BadRequest, new { message = $"La tabla ya tiene una clave primaria. No se puede agregar otra." });
+                    }
+
+                    // Crear la clave primaria en la columna
+                    string addPrimaryKeyCommand = $@"
+                        ALTER TABLE {nombreTabla}
+                        ADD CONSTRAINT PK_{nombreTabla}_{columna.nombre} PRIMARY KEY ({columna.nombre})";
+                    sql.Database.ExecuteSqlCommand(addPrimaryKeyCommand);
+                }
+
+                return Content(HttpStatusCode.OK, new { message = $"La columna '{nombreCampo}' ha sido actualizada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
     }
 }

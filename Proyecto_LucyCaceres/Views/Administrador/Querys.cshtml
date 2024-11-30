@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Campos";
+    ViewBag.Title = "Querys";
     Layout = "~/Views/Administrador/_LayoutAdmin.cshtml";
 }
 
@@ -36,7 +36,7 @@
             </a>
         </div>
         <div class="col-sm-3" id="editBotton" style="margin-top: 30px;">
-            <a class="btn btn-success btn-user btn-block" onclick="editarCampos()">
+            <a class="btn btn-success btn-user btn-block" onclick="editarTabla()">
                 Editar
             </a>
         </div>
@@ -60,16 +60,16 @@
     </div>
 
     <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-5">
-            <label>Es llave primaria:</label>
-            <select name="llave" id="primaryKey" class="form-control form-control-user" onchange="llavePrimaria()">
+        <div class="col-sm-5 mb-3 mb-sm-0">
+            <label>Es opcional:</label>
+            <select name="nulo" id="isNull" class="form-control form-control-user" read>
                 <option value=false>No</option>
                 <option value=true>Sí</option>
             </select>
         </div>
-        <div class="col-sm-5 mb-3 mb-sm-0">
-            <label>Es opcional:</label>
-            <select name="nulo" id="isNull" class="form-control form-control-user" read>
+        <div class="col-sm-5">
+            <label>Es llave primaria:</label>
+            <select name="llave" id="primaryKey" class="form-control form-control-user" read>
                 <option value=false>No</option>
                 <option value=true>Sí</option>
             </select>

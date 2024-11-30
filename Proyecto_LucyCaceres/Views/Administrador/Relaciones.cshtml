@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Campos";
+    ViewBag.Title = "Relaciones";
     Layout = "~/Views/Administrador/_LayoutAdmin.cshtml";
 }
 
@@ -26,53 +26,41 @@
 
 
     <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-            <label>Tabla:</label>
-            <select id="listaTablas" class="form-control form-control-user" onchange="listadoCampos()"></select>
+        <div class="col-sm-4 mb-3 mb-sm-0">
+            <label>Es de uno a muchos:</label>
+            <select name="nulo" id="muchosMuchos" class="form-control form-control-user" read onchange="verInput()">
+                <option value=false>No</option>
+                <option value=true>Sí</option>
+            </select>
+        </div>
+        <div class="col-sm-4 mb-3 mb-sm-0" id="tablaIntermedia" hidden>
+            <label>Nombre de la tabla</label>
+            <input type="text" class="form-control form-control-user" id="espeDato">
         </div>
         <div class="col-sm-3" id="addBotton" style="margin-top: 30px;">
             <a class="btn btn-primary btn-user btn-block" onclick="agregarCampos()">
                 Agregar
             </a>
         </div>
-        <div class="col-sm-3" id="editBotton" style="margin-top: 30px;">
-            <a class="btn btn-success btn-user btn-block" onclick="editarCampos()">
-                Editar
-            </a>
-        </div>
-        <div class="col-sm-1" id="closeBotton" style="margin-top: 35px;">
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
-        </div>
     </div>
     <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-4 mb-3 mb-sm-0">
-            <label>Nombre de Campo:</label>
-            <input type="text" class="form-control form-control-user" id="nombreCampo">
-        </div>
-        <div class="col-sm-3">
-            <label>Tipo de Dato:</label>
-            <select id="listaTipoDatos" class="form-control form-control-user" onchange="verificarTipoDato()"></select>
-        </div>
-        <div class="col-sm-3 mb-3 mb-sm-0">
-            <label>Especificación de Campo:</label>
-            <input type="text" class="form-control form-control-user" id="espeDato" disabled="disabled">
-        </div>
-    </div>
-
-    <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-5">
-            <label>Es llave primaria:</label>
-            <select name="llave" id="primaryKey" class="form-control form-control-user" onchange="llavePrimaria()">
-                <option value=false>No</option>
-                <option value=true>Sí</option>
-            </select>
-        </div>
         <div class="col-sm-5 mb-3 mb-sm-0">
-            <label>Es opcional:</label>
-            <select name="nulo" id="isNull" class="form-control form-control-user" read>
-                <option value=false>No</option>
-                <option value=true>Sí</option>
-            </select>
+            <label>Tabla 1:</label>
+            <select id="listaTablas1" class="form-control form-control-user" onchange="listaCampos1()"></select>
+        </div>
+        <div class="col-sm-5">
+            <label>Campo 1:</label>
+            <select id="listaCampos1" class="form-control form-control-user"></select>
+        </div>
+    </div>
+    <div class="form-group row" style="margin-left: 18px;">
+        <div class="col-sm-5 mb-3 mb-sm-0">
+            <label>Tabla 2:</label>
+            <select id="listaTablas2" class="form-control form-control-user" onchange="listaCampos2()"></select>
+        </div>
+        <div class="col-sm-5">
+            <label>Campo 2:</label>
+            <select id="listaCampos2" class="form-control form-control-user"></select>
         </div>
     </div>
     <div class="container-fluid">
@@ -85,54 +73,16 @@
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Tipo</th>
-                                <th>Opcional</th>
-                                <th>Llave primaría</th>
-                                <th>Editar campo</th>
-                                <th>Eliminar campo</th>
+                                <th>Nombre Relación</th>
+                                <th>Tabla 1</th>
+                                <th>Campo 1</th>
+                                <th>Tabla 2</th>
+                                <th>Campo 2</th>
+                                <th>Eliminar relación</th>
                             </tr>
                         </thead>
                         <tbody id="detalleTabla"></tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de éxito -->
-    <div class="modal fade" id="modalExito" tabindex="-1" role="dialog" aria-labelledby="modalExitoLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalExitoLabel">Éxito</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="modalExitoMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de error -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="modalErrorLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="titleModal">Error</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="mensajeModal">
-                    <!-- El mensaje de error irá aquí -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -157,10 +107,9 @@
             </div>
         </div>
     </div>
-    <script src="~/Scripts/App/Campos.js" asp-append-version="true"></script>
+    <script src="~/Scripts/App/Relaciones.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        listaTablas();
-        listaTipoDatos();
+        cargarListas();
         closeInput();
     </script>
 
@@ -178,5 +127,6 @@
     <script src="~/Theme/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 </body>
 </html>
+
 
 
