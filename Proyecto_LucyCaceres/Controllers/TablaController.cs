@@ -142,6 +142,49 @@ namespace Proyecto_LucyCaceres.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("api/Tabla/createTableMySql/{nombreTabla}")]
+        public IHttpActionResult createTablaMySql(string nombreTabla)
+        {
+            // Validar que el nombre de la tabla no esté vacío y que solo contenga caracteres alfanuméricos y guiones bajos
+            if (string.IsNullOrWhiteSpace(nombreTabla) || !Regex.IsMatch(nombreTabla, @"^[a-zA-Z0-9_]+$"))
+            {
+                return Content(HttpStatusCode.BadRequest, new { message = "El nombre de la tabla no es válido. Solo se permiten letras, números y guiones bajos." });
+            }
+
+            try
+            {
+                // Obtener el nombre de la base de datos desde la conexión activa
+                var databaseName = sql.Database.Connection.Database;
+
+                // Verificar si la tabla ya existe en MySQL
+                bool tablaExisteSql = sql.Database.SqlQuery<int>($@"
+                        SELECT COUNT(*) 
+                        FROM information_schema.tables 
+                        WHERE table_name = @p0 AND table_schema = @p1", nombreTabla, databaseName).SingleOrDefault() > 0;
+
+                if (tablaExisteSql)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"La tabla '{nombreTabla}' ya existe en MySQL." });
+                }
+
+                // Crear la tabla en MySQL
+                sql.Database.ExecuteSqlCommand($@"
+                        CREATE TABLE {nombreTabla} (
+                            Id INT AUTO_INCREMENT PRIMARY KEY
+                        )");
+
+                return Content(HttpStatusCode.OK, new { message = $"Tabla '{nombreTabla}' fue creada exitosamente en MySQL." });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+
+
         [HttpPut]
         [Route("api/Tabla/vaciarTablaSQL/{nombreTabla}")]
         public IHttpActionResult vaciarTablaSQL(string nombreTabla)
@@ -197,6 +240,75 @@ namespace Proyecto_LucyCaceres.Controllers
                     // Reiniciar el valor de IDENTITY
                     sql.Database.ExecuteSqlCommand($@"
                     DBCC CHECKIDENT(@p0, RESEED, 0)", nombreTabla);
+                }
+
+                return Content(HttpStatusCode.OK, new { message = $"La tabla '{nombreTabla}' ha sido vaciada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPut]
+        [Route("api/Tabla/vaciarTablaMySQL/{nombreTabla}")]
+        public IHttpActionResult vaciarTablaMySQL(string nombreTabla)
+        {
+            if (string.IsNullOrWhiteSpace(nombreTabla))
+            {
+                return Content(HttpStatusCode.BadRequest, new { message = "El nombre de la tabla es requerido." });
+            }
+
+            try
+            {
+                // Verificar si hay claves foráneas que referencian la tabla
+                var foreignKeysReferencing = sql.Database.SqlQuery<string>($@"
+                SELECT kcu.constraint_name
+                FROM information_schema.key_column_usage kcu
+                JOIN information_schema.table_constraints tc
+                ON kcu.constraint_name = tc.constraint_name
+                WHERE kcu.referenced_table_name = @p0 AND tc.constraint_type = 'FOREIGN KEY'", nombreTabla).ToList();
+
+                if (foreignKeysReferencing.Count > 0)
+                {
+                    foreach (var fkName in foreignKeysReferencing)
+                    {
+                        // Buscar la tabla que tiene la clave foránea que referencia la tabla actual
+                        var referencingTable = sql.Database.SqlQuery<string>($@"
+                    SELECT TABLE_NAME
+                    FROM information_schema.key_column_usage
+                    WHERE constraint_name = @p0", fkName).FirstOrDefault();
+
+                        if (referencingTable != null)
+                        {
+                            // Comprobar si hay registros en la tabla que hace referencia
+                            var count = sql.Database.SqlQuery<int>($@"
+                        SELECT COUNT(*) 
+                        FROM {referencingTable}").FirstOrDefault();
+
+                            if (count > 0)
+                            {
+                                return Content(HttpStatusCode.BadRequest, new { message = $"No se pueden eliminar los datos de la tabla '{nombreTabla}', ya que otras tablas tienen dependencia a esta." });
+                            }
+                        }
+                    }
+                }
+
+                // Vaciar la tabla
+                sql.Database.ExecuteSqlCommand($@"
+        DELETE FROM {nombreTabla}");
+
+                // Comprobar si la tabla tiene un campo AUTO_INCREMENT
+                var haveAutoIncrement = sql.Database.SqlQuery<int>($@"
+                SELECT COUNT(COLUMN_NAME)
+                FROM information_schema.columns
+                WHERE table_name = @p0 AND extra LIKE '%auto_increment%'", nombreTabla).FirstOrDefault();
+
+                if (haveAutoIncrement > 0)
+                {
+                    // Reiniciar el valor de AUTO_INCREMENT
+                    sql.Database.ExecuteSqlCommand($@"
+            ALTER TABLE {nombreTabla} AUTO_INCREMENT = 1");
                 }
 
                 return Content(HttpStatusCode.OK, new { message = $"La tabla '{nombreTabla}' ha sido vaciada exitosamente." });
