@@ -351,5 +351,42 @@ namespace Proyecto_LucyCaceres.Controllers
                 return InternalServerError(ex);
             }
         }
+
+        [HttpPut]
+        [Route("api/Tabla/eliminarTableMySql/{nombreTabla}")]
+        public IHttpActionResult eliminarMySQL(string nombreTabla)
+        {
+            if (string.IsNullOrWhiteSpace(nombreTabla))
+            {
+                return Content(HttpStatusCode.BadRequest, new { message = "El nombre de la tabla es requerido." });
+            }
+
+            try
+            {
+                // Verificar si hay claves foráneas que referencian la tabla
+                var foreignKeysReferencing = sql.Database.SqlQuery<string>($@"
+                SELECT kcu.constraint_name
+                FROM information_schema.key_column_usage kcu
+                JOIN information_schema.table_constraints tc
+                ON kcu.constraint_name = tc.constraint_name
+                WHERE kcu.referenced_table_name = @p0 AND tc.constraint_type = 'FOREIGN KEY'", nombreTabla).ToList();
+
+                if (foreignKeysReferencing.Count > 0)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"La tabla '{nombreTabla}' no se puede eliminar, ya que otras tablas tienen dependencia a esta." });
+                }
+
+                // Eliminar la tabla
+                sql.Database.ExecuteSqlCommand($@"
+                DROP TABLE {nombreTabla}");
+
+                return Content(HttpStatusCode.OK, new { message = $"La tabla '{nombreTabla}' ha sido eliminada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }
