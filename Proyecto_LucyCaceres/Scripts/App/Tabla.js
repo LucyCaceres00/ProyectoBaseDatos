@@ -265,27 +265,35 @@ function vaciarTablaSQL() {
     return false;
 }
 
-function vaciarTablaMySQL(nombre) {
-    fetch(`/api/Tabla/vaciarTablaSQL/${nombre}`, {
+function vaciarTablaMySQL() {
+    if (!nombreTabla) {
+        mostrarModalError('El nombre de la tabla es requerido.');
+        return;
+    }
+
+    fetch(`/api/Tabla / vaciarTablaMySQL / ${nombreTabla}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-    }).then(response => {
-        return response.json().then(data => {
-            if (!response.ok) {
-                mostrarModalError(data.message || 'Error al cambiar el nombre de la tabla');
-            }
-            mostrarModalExito(data.message || 'La tabla se creó correctamente.');
-            return data;
-        });
     })
-        .then(() => getListado())
-        .then(() => limpiarCampo())
-        .catch(error => mostrarModalError(error));
-    closeInput();
-    return false;
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    mostrarModalError(data.message || 'Error al vaciar los datos de la tabla.');
+                } else {
+                    mostrarModalExito(data.message || 'Se eliminaron los datos de la tabla correctamente.');
+                }
+                return data;
+            });
+        })
+        .then(() => getListado()) // Actualizar listado de tablas
+        .then(() => limpiarCampo()) // Limpiar el campo de entrada
+        .catch(error => mostrarModalError(error)); // Manejar errores
+
+    closeInput(); // Cerrar el formulario de entrada (si aplica)
+    return false; // Evitar recargar la página
 }
 
 function mostrarModalError(mensaje) {
