@@ -154,9 +154,10 @@ function editarTabla() {
         updateTablaSQL();
     }
     else {
-        getTablasMySQL();
+        updateTablaMySQL();
     }
 }
+
 
 function updateTablaSQL() {
     const nombre = document.getElementById('tableName').value.trim();
@@ -184,6 +185,41 @@ function updateTablaSQL() {
     closeInput();
     return false;
 }
+
+function updateTablaSQL() {
+    const idTabla = document.getElementById('tableId').value.trim(); 
+    const nombre = document.getElementById('tableName').value.trim();
+
+    if (!idTabla || !nombre) {
+        mostrarModalError('El ID de la tabla y el nombre son requeridos.');
+        return;
+    }
+
+    fetch(`/api/Tabla/updateTableSql/${idTabla}/${nombre}`, { 
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    mostrarModalError(data.message || 'Error al cambiar el nombre de la tabla.');
+                } else {
+                    mostrarModalExito(data.message || 'Se actualizó el nombre de la tabla correctamente.');
+                }
+                return data;
+            });
+        })
+        .then(() => getListado()) // Actualizar el listado de tablas
+        .then(() => limpiarCampo()) // Limpiar el campo de entrada
+        .catch(error => mostrarModalError(`Error: ${error.message}`)); // Manejar errores
+
+    closeInput(); // Cerrar el formulario de entrada (si aplica)
+    return false; // Evitar recargar la página
+}
+
 
 function editTabla(nombre) {
     document.getElementById('editBotton').style.display = 'block';
