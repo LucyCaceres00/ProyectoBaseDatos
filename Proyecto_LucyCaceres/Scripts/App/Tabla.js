@@ -88,27 +88,34 @@ function registrarTabla() {
 function registrarTablaMySQL() {
     const nombre = document.getElementById('tableName').value.trim();
 
+    // Validar que el nombre no esté vacío
+    if (!nombre) {
+        mostrarModalError('El nombre de la tabla es requerido.');
+        return;
+    }
+
     fetch(`/api/Tabla/createTableSql/${nombre}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-    }).then(response => {
-        return response.json().then(data => {
-            if (!response.ok) {
-                mostrarModalError(data.message || 'Error al crear la tabla');
-            }
-            else {
-                mostrarModalExito(data.message || 'La tabla se creó correctamente.');
-            }
-            return data;
-        });
     })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    mostrarModalError(data.message || 'Error al crear la tabla');
+                } else {
+                    mostrarModalExito(data.message || 'La tabla se creó correctamente.');
+                }
+                return data;
+            });
+        })
         .then(() => getListado())
         .then(() => limpiarCampo())
         .catch(error => mostrarModalError(error));
 }
+
 
 function registrarTablaSQL() {
     const nombre = document.getElementById('tableName').value.trim();
