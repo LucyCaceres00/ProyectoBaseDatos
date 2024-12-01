@@ -244,6 +244,7 @@
     <Compile Include="Controllers\CamposController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\QuerysController.cs" />
     <Compile Include="Controllers\RelacionController.cs" />
     <Compile Include="Controllers\TablaController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -268,18 +269,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelDB.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\ByteArrayImageConversion.cs" />
     <Compile Include="Models\CamposVM.cs" />
-    <Compile Include="Models\CiudadanoVM.cs" />
-    <Compile Include="Models\MediosTransporteVM.cs" />
     <Compile Include="Models\MySqlDatabase.cs" />
+    <Compile Include="Models\QuerysVM.cs" />
     <Compile Include="Models\RelacionesVM.cs" />
     <Compile Include="Models\RolVM.cs" />
     <Compile Include="Models\TablasVM.cs" />
-    <Compile Include="Models\TipoDocumentosxCiudadanoVM.cs" />
-    <Compile Include="Models\TipoDocumentoVM.cs" />
-    <Compile Include="Models\TransportexCiudadanoVM.cs" />
-    <Compile Include="Models\UsuarioVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Role.cs">
       <DependentUpon>ModelDB.tt</DependentUpon>
@@ -348,7 +343,6 @@
     <Content Include="Scripts\App\MedTransCiudadano.js" />
     <Content Include="Scripts\App\Querys.js" />
     <Content Include="Scripts\App\Relaciones.js" />
-    <Content Include="Scripts\App\Rol.js" />
     <Content Include="Scripts\App\TipoDocumento.js" />
     <Content Include="Scripts\App\TipoDocumentosCiudadanos.js" />
     <Content Include="Scripts\App\Usuarios.js" />

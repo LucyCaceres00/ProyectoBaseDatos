@@ -58,5 +58,38 @@ namespace Proyecto_LucyCaceres.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("api/eliminarRelacion/{nombreTabla}/{llave}")]
+        public IHttpActionResult EliminarLlavesForaneas(string nombreTabla, string llave)
+        {
+            try
+            {
+                // Obtener las llaves foráneas relacionadas con la tabla
+                string obtenerLlavesQuery = @"
+                        SELECT fk.name AS NombreRelacion
+                        FROM sys.foreign_keys fk
+                        INNER JOIN sys.tables t ON fk.parent_object_id = t.object_id
+                        WHERE t.name = @nombreTabla";
+
+                var llavesForaneas = sql.Database.SqlQuery<string>(obtenerLlavesQuery,
+                    new SqlParameter("@nombreTabla", nombreTabla)).ToList();
+
+                if (llavesForaneas.Count == 0)
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"No se encontraron llaves foráneas para la tabla '{nombreTabla}'." });
+                }
+
+                string eliminarLlaveQuery = $@"
+                            ALTER TABLE {nombreTabla}
+                            DROP CONSTRAINT {llave}";
+
+                return Content(HttpStatusCode.OK, new { message = $"Se eliminaron {llavesForaneas.Count} llaves foráneas asociadas a la tabla '{nombreTabla}'." });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

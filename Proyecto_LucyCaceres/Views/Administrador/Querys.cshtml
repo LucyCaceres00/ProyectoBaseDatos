@@ -23,145 +23,24 @@
     <link href="~/Theme/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 <body>
-
-
-    <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-            <label>Tabla:</label>
-            <select id="listaTablas" class="form-control form-control-user" onchange="listadoCampos()"></select>
+    <div class="container mt-4">
+        <h5 class="text-center">Ejecutador SQL Query</h5>    
+        <div class="form-group">
+            <label for="sqlQuery">Escriba su query SQL aquí:</label>
+            <textarea class="form-control" id="sqlQuery" rows="6" placeholder="Ingrese su SQL query aquí (INSERT, DELETE, SELECT, etc.)"></textarea>
         </div>
-        <div class="col-sm-3" id="addBotton" style="margin-top: 30px;">
-            <a class="btn btn-primary btn-user btn-block" onclick="agregarCampos()">
-                Agregar
-            </a>
-        </div>
-        <div class="col-sm-3" id="editBotton" style="margin-top: 30px;">
-            <a class="btn btn-success btn-user btn-block" onclick="editarTabla()">
-                Editar
-            </a>
-        </div>
-        <div class="col-sm-1" id="closeBotton" style="margin-top: 35px;">
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
-        </div>
-    </div>
-    <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-4 mb-3 mb-sm-0">
-            <label>Nombre de Campo:</label>
-            <input type="text" class="form-control form-control-user" id="nombreCampo">
-        </div>
-        <div class="col-sm-3">
-            <label>Tipo de Dato:</label>
-            <select id="listaTipoDatos" class="form-control form-control-user" onchange="verificarTipoDato()"></select>
-        </div>
-        <div class="col-sm-3 mb-3 mb-sm-0">
-            <label>Especificación de Campo:</label>
-            <input type="text" class="form-control form-control-user" id="espeDato" disabled="disabled">
+        <button class="btn btn-primary" id="executeQuery">Execute Query</button>
+        <div class="mt-4">
+            <h5>Resultados del query:</h5>
+            <div id="queryResults" class="border p-3 bg-light">
+                <!-- Results will be displayed here -->
+            </div>
         </div>
     </div>
 
-    <div class="form-group row" style="margin-left: 18px;">
-        <div class="col-sm-5 mb-3 mb-sm-0">
-            <label>Es opcional:</label>
-            <select name="nulo" id="isNull" class="form-control form-control-user" read>
-                <option value=false>No</option>
-                <option value=true>Sí</option>
-            </select>
-        </div>
-        <div class="col-sm-5">
-            <label>Es llave primaria:</label>
-            <select name="llave" id="primaryKey" class="form-control form-control-user" read>
-                <option value=false>No</option>
-                <option value=true>Sí</option>
-            </select>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="card shadow mb-4">
-            <div class="card-header py-4">
-                <h6 class="m-0 font-weight-bold text-primary">Listado de campos por tabla</h6>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Tipo</th>
-                                <th>Opcional</th>
-                                <th>Llave primaría</th>
-                                <th>Editar campo</th>
-                                <th>Eliminar campo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detalleTabla"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de éxito -->
-    <div class="modal fade" id="modalExito" tabindex="-1" role="dialog" aria-labelledby="modalExitoLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalExitoLabel">Éxito</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="modalExitoMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de error -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="modalErrorLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="titleModal">Error</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="mensajeModal">
-                    <!-- El mensaje de error irá aquí -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de confirmación -->
-    <div class="modal fade" id="confirmacionModal" tabindex="-1" role="dialog" aria-labelledby="modalErrorLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="titleModal">¿Está seguro de realizar la acción?</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="msjModalConfirm">
-                    <!-- El mensaje de error irá aquí -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" id="btnElimar" onclick="eliminarCampo()">Confirmar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="~/Scripts/App/Campos.js" asp-append-version="true"></script>
+    <!-- JavaScript -->
+    <script src="~/Scripts/App/Querys.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        listaTablas();
-        listaTipoDatos();
-        closeInput();
     </script>
 
     <!-- Bootstrap core JavaScript-->
@@ -178,5 +57,3 @@
     <script src="~/Theme/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 </body>
 </html>
-
-

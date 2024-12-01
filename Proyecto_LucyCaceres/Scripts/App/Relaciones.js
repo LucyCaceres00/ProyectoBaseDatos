@@ -2,6 +2,7 @@
 let nombreColumna;
 let nombreTabla;
 let nombreTabla2;
+let relacion;
 
 function cargarListas() {
     listaTablas1();
@@ -54,8 +55,7 @@ function listaTablas2() {
 }
 
 function verInput() {
-    if (document.getElementById('muchosMuchos').value == "true")
-    {
+    if (document.getElementById('muchosMuchos').value == "true") {
         document.getElementById('tablaIntermedia').hidden = false;
     }
     else {
@@ -137,7 +137,7 @@ function mostrarCampos(data) {
     data.forEach(item => {
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = 'Eliminar';
-        deleteButton.setAttribute('onclick', `eliminarModal('${item.nombre}')`);
+        deleteButton.setAttribute('onclick', `eliminarModal('${item.NombreRelacion}')`);
 
         let tr = tBody.insertRow();
 
@@ -167,122 +167,27 @@ function mostrarCampos(data) {
     todos = data;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function getListadoCampos() {
-    const isSql = (localStorage.getItem('isSql') === 'true');
-    if (isSql) {
-        getTablasSQL();
-    }
-    else {
-        getTablasMySQL();
-    }
+function eliminarModal(nombre) {
+    relacion = nombre;
+    const modal = document.getElementById('confirmacionModal')
+    var mensajeModal = document.getElementById("msjModalConfirm");
+    mensajeModal.textContent = `Se llevará a cabo un proceso de eliminación de la relación '${nombre}'. Esta acción es irreversible ¿Desea continuar?`;
+    $(modal).modal('show');
 }
 
-function getTablasSQL() {
-    fetch(`/api/Tabla/getTablasSql`)
-        .then(response => response.json())
-        .then(data => mostrarTablas(data))
-        .catch(error => console.error("No Se Logro Cargar Datos", error));
-}
-
-
-function listaTipoDatos() {
-    const isSql = (localStorage.getItem('isSql') === 'true');
-    if (isSql) {
-        fetch('/api/campos/getDataType')
-            .then(response => response.json())
-            .then(data => {
-                const dropdown = document.getElementById('listaTipoDatos');
-                data.forEach(doc => {
-                    const option = document.createElement('option');
-                    option.value = doc.tipoDato;
-                    option.textContent = doc.tipoDato;
-                    dropdown.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error al obtener los tipos de datos.', error));
-    }
-    else {
-        //getTablasMySQL();
-    }
-}
-
-function closeInput() {
-    document.getElementById('addBotton').style.display = 'block';
-    limpiarCampo();
-}
-
-function verificarTipoDato() {
-    var select = document.getElementById('listaTipoDatos');
-    var input = document.getElementById('espeDato');
-    var valor = select.value;
-
-    input.disabled = true;
-    input.placeholder = '';
-
-    if (valor.includes('char')) {
-        input.disabled = false;
-        input.placeholder = 'Ejemplo: 2';
-    }
-    if (valor.includes('decimal')) {
-        input.disabled = false;
-        input.placeholder = 'Ejemplo: 10,2';
-    }
-}
-
-function llavePrimaria() {
-    if (document.getElementById('primaryKey').value == "true") {
-        document.getElementById('isNull').value = "false";
-        document.getElementById('isNull').disabled = true;
-    }
-    else
-        document.getElementById('isNull').disabled = false;
-}
-
-function editTabla(nombre) {
-    nombreColumna = nombre;
-    document.getElementById('editBotton').style.display = 'block';
-    document.getElementById('addBotton').style.display = 'none';
-
-    const item = todos.find(item => item.nombre === nombre);
-    document.getElementById('nombreCampo').value = item.nombre;
-    document.getElementById('listaTipoDatos').value = item.tipoDato;
-    document.getElementById('primaryKey').value = item.isPrimaryKey == 1 ? "true" : "false";
-    document.getElementById('isNull').value = item.isNull;
-}
-
-function eliminarCampo() {
+function eliminarRelacion() {
     const isSql = (localStorage.getItem('isSql') === 'true');
 
     if (isSql) {
-        eliminarColumnaSQL();
+        eliminarRelacionSql();
     }
     else {
-        getCamposTablaMySQL();
+        //getCamposTablaMySQL();
     }
 }
 
-function eliminarColumnaSQL() {
-    fetch(`/api/eliminarColumna/${nombreTabla}/${nombreColumna}`, {
+function eliminarRelacionSql() {
+    fetch(`/api/eliminarRelacion/${nombreTabla}/${relacion}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -291,131 +196,17 @@ function eliminarColumnaSQL() {
     }).then(response => {
         return response.json().then(data => {
             if (!response.ok) {
-                mostrarModalError(data.message || 'Error al eliminar la columna.');
+                mostrarModalError(data.message || 'Error al eliminar la relación.');
             }
             else {
-                mostrarModalExito(data.message || 'Se elimino la columna correctamente.');
+                mostrarModalExito(data.message || 'Se elimino la relación correctamente.');
             }
             return data;
         });
     })
-        .then(() => getCamposTablaSQL())
+        .then(() => listadoRelaciones())
         .catch(error => mostrarModalError(error));
     closeInput();
     return false;
 }
 
-function eliminarModal(nombre) {
-    nombreColumna = nombre;
-    const modal = document.getElementById('confirmacionModal')
-    var mensajeModal = document.getElementById("msjModalConfirm");
-    mensajeModal.textContent = `Se llevará a cabo un proceso de eliminación del campo de tabla '${nombre}'. Esta acción es irreversible ¿Desea continuar?`;
-    $(modal).modal('show');
-}
-
-function mostrarModalError(mensaje) {
-    const errorModal = document.getElementById('errorModal');
-    var mensajeModal = document.getElementById("mensajeModal");
-    mensajeModal.textContent = mensaje;
-    $(errorModal).modal('show');
-}
-
-function mostrarModalExito(mensaje) {
-    const errorModal = document.getElementById('modalExito')
-    var mensajeModal = document.getElementById("modalExitoMessage");
-    mensajeModal.textContent = mensaje;
-    $(errorModal).modal('show');
-}
-
-function agregarCampos() {
-    const isSql = (localStorage.getItem('isSql') === 'true');
-    if (isSql) {
-        registrarCampoSQL();
-    }
-    else {
-        getTablasMySQL();
-    }
-}
-
-function registrarCampoSQL() {
-    const item = {
-        nombre: document.getElementById('nombreCampo').value,
-        tipoDato: document.getElementById('listaTipoDatos').value,
-        especificacion: document.getElementById('espeDato').value,
-        isNull: document.getElementById('isNull').value,
-        primaryKey: document.getElementById('primaryKey').value
-    };
-
-    fetch(`/api/agregarColumna/${nombreTabla}`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(item)
-    })
-        .then(response => {
-            return response.json().then(data => {
-                if (!response.ok) {
-                    mostrarModalError(data.message || 'Hubo un error al intentar crear el campo.');
-                }
-                else {
-                    mostrarModalExito(data.message || 'Se agrego la columna correctamente.');
-                }
-                return data;
-            });
-        })
-        .then(() => getCamposTablaSQL())
-        .then(() => limpiarCampo())
-        .catch(error => mostrarModalError(error));
-}
-
-function limpiarCampo() {
-    document.getElementById('nombreCampo').value = "";
-    document.getElementById('espeDato').value = "";
-    document.getElementById('isNull').value = "";
-    document.getElementById('primaryKey').value = "";
-}
-
-function editarCampos() {
-    const isSql = (localStorage.getItem('isSql') === 'true');
-    if (isSql) {
-        editarCampoSQL();
-    }
-    else {
-        //getTablasMySQL();
-    }
-}
-
-function editarCampoSQL() {
-    const item = {
-        nombre: document.getElementById('nombreCampo').value,
-        tipoDato: document.getElementById('listaTipoDatos').value,
-        especificacion: document.getElementById('espeDato').value,
-        isNull: document.getElementById('isNull').value,
-        primaryKey: document.getElementById('primaryKey').value
-    };
-
-    fetch(`/api/editarColumna/${nombreTabla}/${nombreColumna}`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(item)
-    })
-        .then(response => {
-            return response.json().then(data => {
-                if (!response.ok) {
-                    mostrarModalError(data.message || 'Hubo un error al intentar crear el campo.');
-                }
-                else {
-                    mostrarModalExito(data.message || 'Se agrego la columna correctamente.');
-                }
-                return data;
-            });
-        })
-        .then(() => getCamposTablaSQL())
-        .then(() => limpiarCampo())
-        .catch(error => mostrarModalError(error));
-}
