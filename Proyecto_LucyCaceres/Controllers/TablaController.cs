@@ -93,7 +93,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -139,7 +139,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -184,7 +184,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -224,7 +224,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -291,7 +291,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -341,7 +341,7 @@ namespace Proyecto_LucyCaceres.Controllers
 
                 // Vaciar la tabla
                 sql.Database.ExecuteSqlCommand($@"
-        DELETE FROM {nombreTabla}");
+                    DELETE FROM {nombreTabla}");
 
                 // Comprobar si la tabla tiene un campo AUTO_INCREMENT
                 var haveAutoIncrement = sql.Database.SqlQuery<int>($@"
@@ -353,14 +353,14 @@ namespace Proyecto_LucyCaceres.Controllers
                 {
                     // Reiniciar el valor de AUTO_INCREMENT
                     sql.Database.ExecuteSqlCommand($@"
-            ALTER TABLE {nombreTabla} AUTO_INCREMENT = 1");
+                    ALTER TABLE {nombreTabla} AUTO_INCREMENT = 1");
                 }
 
                 return Content(HttpStatusCode.OK, new { message = $"La tabla '{nombreTabla}' ha sido vaciada exitosamente." });
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -393,7 +393,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -429,7 +429,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 

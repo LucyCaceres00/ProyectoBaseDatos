@@ -94,7 +94,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -167,7 +167,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
 
@@ -228,7 +228,24 @@ namespace Proyecto_LucyCaceres.Controllers
                             EXEC sp_rename '{nombreTabla}.{nombreCampo}', '{columna.nombre}', 'COLUMN'";
                     sql.Database.ExecuteSqlCommand(renameColumnCommand);
                 }
-             
+
+                // Verificar si la columna actual es clave primaria
+                string verificarClavePrimariaQuery = $@"
+                        SELECT CONSTRAINT_NAME
+                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+                        WHERE TABLE_NAME = '{nombreTabla}' AND CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+                var primaryKeyConstraint = sql.Database.SqlQuery<string>(verificarClavePrimariaQuery).SingleOrDefault();
+
+                if (primaryKeyConstraint != null)
+                {
+                    // Si la columna actual es clave primaria y se quiere modificar, eliminarla
+                    string eliminarClavePrimariaCommand = $@"
+                            ALTER TABLE {nombreTabla}
+                            DROP CONSTRAINT {primaryKeyConstraint}";
+                                sql.Database.ExecuteSqlCommand(eliminarClavePrimariaCommand);
+                }
+
                 if (columna.primaryKey)
                 {
                     // Verificar si ya existe una clave primaria en la tabla
@@ -255,7 +272,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return InternalServerError(ex);
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message});
             }
         }
     }

@@ -79,7 +79,7 @@ namespace Proyecto_LucyCaceres.Controllers
             }
             catch (Exception ex)
             {
-                return Content(HttpStatusCode.InternalServerError, new { error = ex.Message });
+                return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
     }

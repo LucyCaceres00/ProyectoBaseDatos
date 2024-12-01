@@ -13,5 +13,6 @@ namespace Proyecto_LucyCaceres.Models
         public string Campo1 { get; set; }
         public string Tabla2 { get; set; }
         public string Campo2 { get; set; }
+        public string TipoRelacion { get; set; }
     }
 }

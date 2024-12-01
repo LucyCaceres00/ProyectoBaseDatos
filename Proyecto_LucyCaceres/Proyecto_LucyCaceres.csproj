@@ -339,14 +339,10 @@
     <Content Include="Scripts\App\Campos.js" />
     <Content Include="Scripts\App\Ciudadano.js" />
     <Content Include="Scripts\App\Dashbord.js" />
-    <Content Include="Scripts\App\MediosTransporte.js" />
-    <Content Include="Scripts\App\MedTransCiudadano.js" />
     <Content Include="Scripts\App\Querys.js" />
     <Content Include="Scripts\App\Relaciones.js" />
-    <Content Include="Scripts\App\TipoDocumento.js" />
-    <Content Include="Scripts\App\TipoDocumentosCiudadanos.js" />
-    <Content Include="Scripts\App\Usuarios.js" />
     <Content Include="Scripts\App\Tabla.js" />
+    <Content Include="Scripts\App\Usuarios.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -2264,17 +2260,10 @@
     <Content Include="Theme\vendor\jquery\jquery.min.map" />
     <Content Include="Theme\vendor\jquery\jquery.slim.min.map" />
     <Content Include="Views\Login\Login.cshtml" />
-    <Content Include="Views\Administrador\Ciudadano.cshtml" />
     <Content Include="Views\Administrador\_LayoutAdmin.cshtml" />
     <Content Include="Views\Login\Registro.cshtml" />
     <Content Include="Views\Login\SinAcceso.cshtml" />
     <Content Include="Views\Administrador\index.cshtml" />
-    <Content Include="Views\Administrador\Rol.cshtml" />
-    <Content Include="Views\Administrador\Usuario.cshtml" />
-    <Content Include="Views\Administrador\MediosTrasporte.cshtml" />
-    <Content Include="Views\Administrador\TipoDocumentos.cshtml" />
-    <Content Include="Views\Administrador\TipoDocumentosCiudadanos.cshtml" />
-    <Content Include="Views\Administrador\MedioTransporteCiudadano.cshtml" />
     <Content Include="Views\Administrador\Tablas.cshtml" />
     <EntityDeploy Include="SqlDatabase.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -2283,7 +2272,6 @@
     <Content Include="SqlDatabase.edmx.diagram">
       <DependentUpon>SqlDatabase.edmx</DependentUpon>
     </Content>
-    <Content Include="Views\Administrador\Modales.cshtml" />
     <Content Include="Views\Administrador\Campos.cshtml" />
     <Content Include="Views\Administrador\Relaciones.cshtml" />
     <Content Include="Views\Administrador\Querys.cshtml" />
