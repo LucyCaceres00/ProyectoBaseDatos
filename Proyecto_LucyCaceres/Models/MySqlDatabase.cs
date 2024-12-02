@@ -19,18 +19,5 @@ namespace Proyecto_LucyCaceres.Models
         {
         }
 
-        public static MySqlConnection GetMySqlConnection()
-        {
-            try
-            {
-                MySqlConnection mySqlConnection = new MySqlConnection("Server=localhost;Database=dataforgeuser;User=root;Password=umana759;Port=3306;");
-                return mySqlConnection;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-        }
     }
 }

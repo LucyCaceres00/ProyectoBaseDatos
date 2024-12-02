@@ -51,7 +51,7 @@ namespace Proyecto_LucyCaceres.Controllers
                         FROM 
                             information_schema.TABLES
                         WHERE 
-                            TABLE_SCHEMA = 'transito'").ToList();
+                            TABLE_SCHEMA = 'prueba'").ToList();
 
             if (tablas.Count == 0)
             {
