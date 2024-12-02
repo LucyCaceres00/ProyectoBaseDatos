@@ -68,6 +68,8 @@ namespace Proyecto_LucyCaceres.Controllers
             return Ok(detallesCampos);
         }
 
+
+
         [HttpPut]
         [Route("api/eliminarColumna/{nombreTabla}/{nombreColumna}")]
         [ResponseType(typeof(CamposVM))]
@@ -274,6 +276,123 @@ namespace Proyecto_LucyCaceres.Controllers
             {
                 return Content(HttpStatusCode.BadRequest, new { message = ex.Message});
             }
+
+
         }
+        [HttpPut]
+        [Route("api/editarColumnaMySQL/{nombreTabla}/{nombreCampo}")]
+        public IHttpActionResult EditarColumnaMySQL(string nombreTabla, string nombreCampo, [FromBody] CamposVM columna)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(columna.nombre) || string.IsNullOrEmpty(columna.tipoDato))
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = $"El nombre del campo y el tipo de dato son obligatorios." });
+                }
+
+                // Verificar si el nuevo nombre de columna ya existe (si el nombre será cambiado)
+                if (!string.Equals(nombreCampo, columna.nombre, StringComparison.OrdinalIgnoreCase))
+                {
+                    string queryExisteColumna = $@"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = '{nombreTabla}'
+              AND COLUMN_NAME = '{columna.nombre}'";
+                    var existeColumna = mySql.Database.SqlQuery<int>(queryExisteColumna).Single();
+
+                    if (existeColumna > 0)
+                    {
+                        return Content(HttpStatusCode.BadRequest, new { message = $"Ya existe un campo con el nombre '{columna.nombre}' en la tabla seleccionada." });
+                    }
+                }
+
+                // Si la tabla tiene registros y la columna será NOT NULL
+                if (!columna.isNull)
+                {
+                    string queryHayDatos = $@"SELECT COUNT(*) FROM {nombreTabla}";
+                    var hayDatos = mySql.Database.SqlQuery<int>(queryHayDatos).Single();
+                    if (hayDatos > 0)
+                    {
+                        return Content(HttpStatusCode.BadRequest, new { message = $"La columna no puede cambiarse a 'NOT NULL' porque la tabla tiene registros existentes." });
+                    }
+                }
+
+                string tipoDatoCompleto = columna.tipoDato;
+                if (!string.IsNullOrEmpty(columna.especificacion))
+                {
+                    tipoDatoCompleto += $"({columna.especificacion})";
+                }
+                string isNullTipe = columna.isNull ? "NULL" : "NOT NULL";
+
+                // Modificar la columna
+                string alterColumn = $@"
+        ALTER TABLE {nombreTabla}
+        MODIFY COLUMN {nombreCampo} {tipoDatoCompleto} {isNullTipe}";
+                mySql.Database.ExecuteSqlCommand(alterColumn);
+
+                // Renombrar columna
+                if (!string.Equals(nombreCampo, columna.nombre, StringComparison.OrdinalIgnoreCase))
+                {
+                    string renameColumnCommand = $@"
+            ALTER TABLE {nombreTabla}
+            CHANGE {nombreCampo} {columna.nombre} {tipoDatoCompleto} {isNullTipe}";
+                    mySql.Database.ExecuteSqlCommand(renameColumnCommand);
+                }
+
+                // Verificar si la columna actual es clave primaria
+                string verificarClavePrimariaQuery = $@"
+        SELECT CONSTRAINT_NAME
+        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+        WHERE TABLE_NAME = '{nombreTabla}' AND CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+                var primaryKeyConstraint = mySql.Database.SqlQuery<string>(verificarClavePrimariaQuery).SingleOrDefault();
+
+                if (primaryKeyConstraint != null)
+                {
+                    // Si la columna actual es clave primaria y se quiere modificar, eliminarla
+                    string eliminarClavePrimariaCommand = $@"
+            ALTER TABLE {nombreTabla}
+            DROP PRIMARY KEY";
+                    mySql.Database.ExecuteSqlCommand(eliminarClavePrimariaCommand);
+                }
+
+                if (columna.primaryKey)
+                {
+                    // Verificar si ya existe una clave primaria en la tabla
+                    string checkPrimaryKeyQuery = $@"
+            SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+            WHERE TABLE_NAME = '{nombreTabla}'
+              AND CONSTRAINT_TYPE = 'PRIMARY KEY'";
+                    var primaryKeyExists = mySql.Database.SqlQuery<int>(checkPrimaryKeyQuery).Single();
+
+                    if (primaryKeyExists > 0)
+                    {
+                        return Content(HttpStatusCode.BadRequest, new { message = $"La tabla ya tiene una clave primaria. No se puede agregar otra." });
+                    }
+
+                    // Crear la clave primaria en la columna
+                    string addPrimaryKeyCommand = $@"
+            ALTER TABLE {nombreTabla}
+            ADD PRIMARY KEY ({columna.nombre})";
+                    mySql.Database.ExecuteSqlCommand(addPrimaryKeyCommand);
+                }
+
+                return Content(HttpStatusCode.OK, new { message = $"La columna '{nombreCampo}' ha sido actualizada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+        
+
+
     }
+
+
+
 }

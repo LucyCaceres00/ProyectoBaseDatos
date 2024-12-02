@@ -285,7 +285,7 @@ function editarCampos() {
         editarCampoSQL();
     }
     else {
-        //getTablasMySQL();
+        editarCamposMySQL();
     }
 }
 
@@ -319,5 +319,37 @@ function editarCampoSQL() {
         })
         .then(() => getCamposTablaSQL())
         .then(() => limpiarCampo())
+        .catch(error => mostrarModalError(error));
+}
+
+function editarCampoMySQL() {
+    const item = {
+        nombre: document.getElementById('nombreCampo').value,
+        tipoDato: document.getElementById('listaTipoDatos').value,
+        especificacion: document.getElementById('espeDato').value,
+        isNull: document.getElementById('isNull').value,
+        primaryKey: document.getElementById('primaryKey').value
+    };
+
+    fetch(`/api/editarColumnaMySQL/${nombreTabla}/${nombreColumna}`, {
+        method: 'PUT', // Cambia a PUT para la actualización
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    mostrarModalError(data.message || 'Hubo un error al intentar editar el campo.');
+                } else {
+                    mostrarModalExito(data.message || 'Se editó la columna correctamente.');
+                }
+                return data;
+            });
+        })
+        .then(() => getCamposTablaMySQL()) // Actualiza la lista de campos
+        .then(() => limpiarCampo()) // Limpia los campos de entrada
         .catch(error => mostrarModalError(error));
 }
