@@ -21,6 +21,12 @@ function getTablasSQL() {
         .catch(error => console.error("No Se Logro Cargar Datos", error));
 }
 
+function getTablasMySQL() {
+    fetch('/api/Tabla/getTablasMySQL') 
+        .then(response => response.json())
+        .then(data => mostrarTablas(data)) 
+        .catch(error => console.error("No Se Logro Cargar Datos", error));
+}
 function listaTablas() {
     const isSql = (localStorage.getItem('isSql') === 'true');
     if (isSql) {
@@ -39,7 +45,7 @@ function listaTablas() {
             .catch(error => console.error('Error al obtener las tablas.', error));
     }
     else {
-        //getTablasMySQL();
+        getTablasMySQL();
     }
 }
 
@@ -60,8 +66,16 @@ function listaTipoDatos() {
             .catch(error => console.error('Error al obtener los tipos de datos.', error));
     }
     else {
-        //getTablasMySQL();
+        getTablasMySQL();
     }
+}
+
+function getCamposTablaMySQL() {
+    document.getElementById('listaTablas').value = nombreTabla; // Set the selected table
+    fetch(`/api/listadoCamposMySQL/${nombreTabla}`) 
+        .then(response => response.json())
+        .then(data => mostrarCampos(data)) 
+        .catch(error => console.error("No Se Logro Cargar Datos", error));
 }
 
 function closeInput() {
@@ -179,8 +193,32 @@ function eliminarCampo() {
         eliminarColumnaSQL();
     }
     else {
-        getCamposTablaMySQL();
+        eliminarColumnaMySQL();
     }
+}
+
+function eliminarColumnaMySQL() {
+    fetch(`/api/eliminarColumnaMySQL/${nombreTabla}/${nombreColumna}`, {
+        method: 'PUT', 
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    mostrarModalError(data.message || 'Error al eliminar la columna.');
+                } else {
+                    mostrarModalExito(data.message || 'Se eliminó la columna correctamente.');
+                }
+                return data;
+            });
+        })
+        .then(() => getCamposTablaMySQL()) // Refresh the list of fields
+        .catch(error => mostrarModalError(error));
+        closeInput();
+        return false;
 }
 
 function eliminarColumnaSQL() {
@@ -285,7 +323,7 @@ function editarCampos() {
         editarCampoSQL();
     }
     else {
-        editarCamposMySQL();
+        editarCampoMySQL();
     }
 }
 
