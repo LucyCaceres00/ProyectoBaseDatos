@@ -6,6 +6,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web.Http;
 using System.Web.Http.Description;
+using MySql.Data.MySqlClient;
 using Proyecto_LucyCaceres.Models;
 
 namespace Proyecto_LucyCaceres.Controllers
@@ -15,8 +16,6 @@ namespace Proyecto_LucyCaceres.Controllers
         private SqlDatabaseEntities sql = new SqlDatabaseEntities();
         private MySqlDatabaseEntities mySql = new MySqlDatabaseEntities();
 
-        //private TransitoEntities db = new TransitoEntities();
-        // GET: Tabla
         [HttpGet]
         [Route("api/Tabla/getTablasSql")]
         [ResponseType(typeof(TablasVM))]
@@ -144,8 +143,8 @@ namespace Proyecto_LucyCaceres.Controllers
         }
 
         [HttpPut]
-        [Route("api/Tabla/createTableMySql/{tableId}/{nombreTabla}")]
-        public IHttpActionResult updateMySQL(int tableId, string nombreTabla)
+        [Route("api/Tabla/uptadeMysql/{nombreAnterior}/{nombreTabla}")]
+        public IHttpActionResult updateMySQL(string nombreAnterior, string nombreTabla)
         {
             if (string.IsNullOrWhiteSpace(nombreTabla))
             {
@@ -158,11 +157,11 @@ namespace Proyecto_LucyCaceres.Controllers
                 var currentTableName = sql.Database.SqlQuery<string>($@"
                             SELECT table_name 
                             FROM information_schema.tables 
-                            WHERE table_schema = DATABASE() AND table_id = @p0", tableId).SingleOrDefault();
+                            WHERE table_schema = DATABASE() AND table_name = @p0", nombreAnterior).SingleOrDefault();
 
                 if (currentTableName == null)
                 {
-                    return Content(HttpStatusCode.BadRequest, new { message = $"No se encontró ninguna tabla con el Id '{tableId}'." });
+                    return Content(HttpStatusCode.BadRequest, new { message = $"No se encontró ninguna tabla con el Id '{nombreAnterior}'." });
                 }
 
                 // Verificar si la nueva tabla ya existe
@@ -200,14 +199,18 @@ namespace Proyecto_LucyCaceres.Controllers
 
             try
             {
-                // Obtener el nombre de la base de datos desde la conexión activa
-                var databaseName = sql.Database.Connection.Database;
+                if (string.IsNullOrWhiteSpace(nombreTabla) || !Regex.IsMatch(nombreTabla, @"^[a-zA-Z0-9_]+$"))
+                {
+                    return Content(HttpStatusCode.BadRequest, new { message = "El nombre de la tabla no es válido." });
+                }
 
-                // Verificar si la tabla ya existe en MySQL
-                bool tablaExisteSql = sql.Database.SqlQuery<int>($@"
-                        SELECT COUNT(*) 
-                        FROM information_schema.tables 
-                        WHERE table_name = @p0 AND table_schema = @p1", nombreTabla, databaseName).SingleOrDefault() > 0;
+                var databaseName = mySql.Database.Connection.Database;
+                bool tablaExisteSql = mySql.Database.SqlQuery<int>($@"
+                    SELECT COUNT(*) 
+                    FROM information_schema.tables 
+                    WHERE table_name = @nombreTabla AND table_schema = @databaseName",
+                    new MySqlParameter("@nombreTabla", nombreTabla),
+                    new MySqlParameter("@databaseName", databaseName)).SingleOrDefault() > 0;
 
                 if (tablaExisteSql)
                 {
@@ -215,20 +218,19 @@ namespace Proyecto_LucyCaceres.Controllers
                 }
 
                 // Crear la tabla en MySQL
-                sql.Database.ExecuteSqlCommand($@"
-                        CREATE TABLE {nombreTabla} (
-                            Id INT AUTO_INCREMENT PRIMARY KEY
-                        )");
+                mySql.Database.ExecuteSqlCommand($@"
+                CREATE TABLE `{nombreTabla}` (
+                    Id INT AUTO_INCREMENT PRIMARY KEY
+                );");
 
                 return Content(HttpStatusCode.OK, new { message = $"Tabla '{nombreTabla}' fue creada exitosamente en MySQL." });
+
             }
             catch (Exception ex)
             {
                 return Content(HttpStatusCode.BadRequest, new { message = ex.Message });
             }
         }
-
-
 
         [HttpPut]
         [Route("api/Tabla/vaciarTablaSQL/{nombreTabla}")]
@@ -269,7 +271,7 @@ namespace Proyecto_LucyCaceres.Controllers
                         }
                     }
                 }
-                
+
                 // Vaciar la tabla
                 sql.Database.ExecuteSqlCommand($@"
                 DELETE FROM {nombreTabla}");

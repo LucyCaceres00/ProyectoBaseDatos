@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -49,10 +50,10 @@
       <HintPath>..\packages\BouncyCastle.Cryptography.2.3.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.26.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.26.1\lib\net45\Google.Protobuf.dll</HintPath>
@@ -85,8 +86,8 @@
     <Reference Include="mysql.data.entity.EF6, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.Entities.6.8.3.0\lib\net45\mysql.data.entity.EF6.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data.EntityFramework, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.EntityFramework.8.0.11\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
+    <Reference Include="MySql.Data.EntityFramework, Version=8.0.33.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.EntityFramework.8.0.33\lib\net462\MySql.Data.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="MySqlConnector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
       <HintPath>..\packages\MySqlConnector.2.4.0\lib\net471\MySqlConnector.dll</HintPath>
@@ -234,9 +235,6 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Ciudadano.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
-    </Compile>
     <Compile Include="Ciudadanos.cs">
       <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
@@ -254,21 +252,6 @@
     <Compile Include="MediosTransporte.cs">
       <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
-    <Compile Include="ModelDB.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ModelDB.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ModelDB.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ModelDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ModelDB.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ModelDB.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\CamposVM.cs" />
     <Compile Include="Models\MySqlDatabase.cs" />
     <Compile Include="Models\QuerysVM.cs" />
@@ -276,9 +259,6 @@
     <Compile Include="Models\RolVM.cs" />
     <Compile Include="Models\TablasVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Role.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
-    </Compile>
     <Compile Include="Roles.cs">
       <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
@@ -297,9 +277,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SqlDatabase.edmx</DependentUpon>
     </Compile>
-    <Compile Include="TipoDocumento.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
-    </Compile>
     <Compile Include="TipoDocumentos.cs">
       <DependentUpon>SqlDatabase.tt</DependentUpon>
     </Compile>
@@ -308,9 +285,6 @@
     </Compile>
     <Compile Include="TransportexCiudadano.cs">
       <DependentUpon>SqlDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Usuario.cs">
-      <DependentUpon>ModelDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Usuarios.cs">
       <DependentUpon>SqlDatabase.tt</DependentUpon>
@@ -326,16 +300,6 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="ModelDB.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ModelDB.Context.cs</LastGenOutput>
-      <DependentUpon>ModelDB.edmx</DependentUpon>
-    </Content>
-    <Content Include="ModelDB.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ModelDB.edmx</DependentUpon>
-      <LastGenOutput>ModelDB.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\App\Campos.js" />
     <Content Include="Scripts\App\Ciudadano.js" />
     <Content Include="Scripts\App\Dashbord.js" />
@@ -364,13 +328,6 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <EntityDeploy Include="ModelDB.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ModelDB.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="ModelDB.edmx.diagram">
-      <DependentUpon>ModelDB.edmx</DependentUpon>
-    </Content>
     <Content Include="libman.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -2344,7 +2301,10 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
   </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
